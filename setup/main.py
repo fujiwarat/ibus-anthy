@@ -24,7 +24,6 @@ from os import environ, getenv, getuid, path
 import os
 import gtk
 import pango
-from gtk import glade
 from ibus import keysyms, modifier, Bus
 from gettext import dgettext, bindtextdomain
 
@@ -55,10 +54,10 @@ class AnthySetup(object):
 
         localedir = getenv("IBUS_LOCALEDIR")
         bindtextdomain("ibus-anthy", localedir)
-        glade.bindtextdomain("ibus-anthy", localedir)
-        glade.textdomain("ibus-anthy")
         glade_file = path.join(path.dirname(__file__), "setup.glade")
-        self.xml = xml = glade.XML(glade_file)
+        self.xml = xml = gtk.Builder()
+        xml.set_translation_domain("ibus-anthy")
+        xml.add_from_file(glade_file)
 
         # glade "icon_name" property has a custom scaling and it seems
         # to be difficult to show the complicated small icon in metacity.
@@ -68,7 +67,7 @@ class AnthySetup(object):
             anthydir = "/usr/share/ibus-anthy"
         icon_path = path.join(anthydir, "icons", "ibus-anthy.png")
         if path.exists(icon_path):
-            xml.get_widget('main').set_icon_from_file(icon_path)
+            xml.get_object('main').set_icon_from_file(icon_path)
 
         for name in ['input_mode', 'typing_method', 'conversion_segment_mode',
                      'period_style', 'symbol_style', 'ten_key_mode',
@@ -77,17 +76,17 @@ class AnthySetup(object):
                      'thumb:keyboard_layout_mode', 'thumb:keyboard_layout',
                      'thumb:fmv_extension', 'thumb:handakuten']:
             section, key = self.__get_section_key(name)
-            xml.get_widget(name).set_active(prefs.get_value(section, key))
+            xml.get_object(name).set_active(prefs.get_value(section, key))
 
         l = ['default', 'atok', 'wnn']
         s_type = prefs.get_value('common', 'shortcut_type')
         s_type = s_type if s_type in l else 'default'
-        xml.get_widget('shortcut_type').set_active(l.index(s_type))
+        xml.get_object('shortcut_type').set_active(l.index(s_type))
 
-        xml.get_widget('page_size').set_value(prefs.get_value('common',
+        xml.get_object('page_size').set_value(prefs.get_value('common',
                                                               'page_size'))
 
-        tv = xml.get_widget('shortcut')
+        tv = xml.get_object('shortcut')
         tv.append_column(gtk.TreeViewColumn(_("Command"),
                                              gtk.CellRendererText(), text=0))
         renderer = gtk.CellRendererText()
@@ -102,15 +101,15 @@ class AnthySetup(object):
             ls.append([k, l_to_s(self.prefs.get_value(sec, k))])
         tv.set_model(ls)
 
-        self.__thumb_kb_layout_mode = xml.get_widget('thumb:keyboard_layout_mode')
-        self.__thumb_kb_layout = xml.get_widget('thumb:keyboard_layout')
+        self.__thumb_kb_layout_mode = xml.get_object('thumb:keyboard_layout_mode')
+        self.__thumb_kb_layout = xml.get_object('thumb:keyboard_layout')
         self.__set_thumb_kb_label()
 
         for name in ['thumb:ls', 'thumb:rs']:
             section, key = self.__get_section_key(name)
-            xml.get_widget(name).set_text(prefs.get_value(section, key))
+            xml.get_object(name).set_text(prefs.get_value(section, key))
 
-        tv = xml.get_widget('treeview2')
+        tv = xml.get_object('treeview2')
         tv.append_column(gtk.TreeViewColumn('', gtk.CellRendererText(), text=0))
         tv.get_selection().connect_after('changed',
                                           self.on_selection_changed, 1)
@@ -119,13 +118,13 @@ class AnthySetup(object):
         key = 'dict_admin_command'
         cli = self.__get_dict_cli_from_list(prefs.get_value('common', key))
         name = 'dict:entry_edit_dict_command'
-        xml.get_widget(name).set_text(cli)
+        xml.get_object(name).set_text(cli)
         key = 'add_word_command'
         cli = self.__get_dict_cli_from_list(prefs.get_value('common', key))
         name = 'dict:entry_add_word_command'
-        xml.get_widget(name).set_text(cli)
+        xml.get_object(name).set_text(cli)
 
-        tv = xml.get_widget('dict:view')
+        tv = xml.get_object('dict:view')
 
         column = gtk.TreeViewColumn((" "))
         renderer = gtk.CellRendererText()
@@ -174,7 +173,7 @@ class AnthySetup(object):
         self.__init_japanese_sort()
         self.__init_about_vbox(icon_path)
 
-        xml.signal_autoconnect(self)
+        xml.connect_signals(self)
 
     def __init_japanese_sort(self):
         japanese_ordered_dict = {}
@@ -184,8 +183,8 @@ class AnthySetup(object):
         self.__japanese_ordered_dict = japanese_ordered_dict;
 
     def __init_about_vbox(self, icon_path):
-        about_dialog = self.xml.get_widget("about_dialog")
-        about_vbox = self.xml.get_widget("about_vbox")
+        about_dialog = self.xml.get_object("about_dialog")
+        about_vbox = self.xml.get_object("about_vbox")
 
         about_dialog.set_version(self.prefs.get_version())
         try:
@@ -230,7 +229,7 @@ class AnthySetup(object):
 
     def __run_message_dialog(self, message, type=gtk.MESSAGE_INFO):
         label = gtk.Label(message)
-        dlg = gtk.MessageDialog(parent=self.xml.get_widget('main'),
+        dlg = gtk.MessageDialog(parent=self.xml.get_object('main'),
                                 flags='modal',
                                 type=type,
                                 buttons=gtk.BUTTONS_OK,
@@ -261,7 +260,7 @@ class AnthySetup(object):
         prefs = self.prefs
         rule = {}
         ls = gtk.ListStore(str, str, str)
-        tv = self.xml.get_widget('treeview_custom_key_table')
+        tv = self.xml.get_object('treeview_custom_key_table')
         section_base = 'romaji_typing_rule'
         section = section_base + '/' + str(method)
         for key in prefs.keys(section):
@@ -290,7 +289,7 @@ class AnthySetup(object):
         prefs = self.prefs
         rule = {}
         ls = gtk.ListStore(str, str, str)
-        tv = self.xml.get_widget('treeview_custom_key_table')
+        tv = self.xml.get_object('treeview_custom_key_table')
         section_base = 'kana_typing_rule'
         section = section_base + '/' + str(method)
         for key in prefs.keys(section):
@@ -319,7 +318,7 @@ class AnthySetup(object):
         prefs = self.prefs
         rule = {}
         ls = gtk.ListStore(str, str, str, str, str)
-        tv = self.xml.get_widget('treeview_custom_key_table')
+        tv = self.xml.get_object('treeview_custom_key_table')
         section_base = 'thumb_typing_rule'
         section = section_base + '/' + str(method)
         for key in prefs.keys(section):
@@ -361,11 +360,11 @@ class AnthySetup(object):
         return tv
 
     def __show_dialog_custom_key_table_extention(self, mode):
-        hbox_combo = self.xml.get_widget('hbox_for_combobox_custom_key_table')
-        label_left = self.xml.get_widget('label_left_thumb_shift_custom_key')
-        entry_left = self.xml.get_widget('entry_left_thumb_shift_custom_key')
-        label_right = self.xml.get_widget('label_right_thumb_shift_custom_key')
-        entry_right = self.xml.get_widget('entry_right_thumb_shift_custom_key')
+        hbox_combo = self.xml.get_object('hbox_for_combobox_custom_key_table')
+        label_left = self.xml.get_object('label_left_thumb_shift_custom_key')
+        entry_left = self.xml.get_object('entry_left_thumb_shift_custom_key')
+        label_right = self.xml.get_object('label_right_thumb_shift_custom_key')
+        entry_right = self.xml.get_object('entry_right_thumb_shift_custom_key')
         if mode == "thumb":
             hbox_combo.show()
             label_left.show()
@@ -380,54 +379,54 @@ class AnthySetup(object):
             entry_right.hide()
 
     def __connect_dialog_custom_key_table_buttons(self, mode):
-        tv = self.xml.get_widget('treeview_custom_key_table')
+        tv = self.xml.get_object('treeview_custom_key_table')
         tv.get_selection().connect_after('changed',
                                          self.on_selection_custom_key_table_changed, 0)
-        entry = self.xml.get_widget('entry_input_custom_key')
+        entry = self.xml.get_object('entry_input_custom_key')
         entry.connect('changed', self.on_entry_custom_key_changed, mode)
-        entry = self.xml.get_widget('entry_output_custom_key')
+        entry = self.xml.get_object('entry_output_custom_key')
         entry.connect('changed', self.on_entry_custom_key_changed, mode)
-        entry = self.xml.get_widget('entry_left_thumb_shift_custom_key')
+        entry = self.xml.get_object('entry_left_thumb_shift_custom_key')
         entry.connect('changed', self.on_entry_custom_key_changed, mode)
-        entry = self.xml.get_widget('entry_right_thumb_shift_custom_key')
+        entry = self.xml.get_object('entry_right_thumb_shift_custom_key')
         entry.connect('changed', self.on_entry_custom_key_changed, mode)
-        button = self.xml.get_widget('button_add_custom_key')
+        button = self.xml.get_object('button_add_custom_key')
         button.set_sensitive(False)
         button.connect('clicked', self.on_btn_add_custom_key, mode)
-        button = self.xml.get_widget('button_remove_custom_key')
+        button = self.xml.get_object('button_remove_custom_key')
         button.set_sensitive(False)
         button.connect('clicked', self.on_btn_remove_custom_key, tv)
 
     def __disconnect_dialog_custom_key_table_buttons(self):
-        tv = self.xml.get_widget('treeview_custom_key_table')
-        combobox = self.xml.get_widget('combobox_custom_key_table')
+        tv = self.xml.get_object('treeview_custom_key_table')
+        combobox = self.xml.get_object('combobox_custom_key_table')
         if tv != None:
             for column in tv.get_columns():
                 tv.remove_column(column)
             for child in tv.get_children():
                 tv.remove(child)
-            entry = self.xml.get_widget('entry_input_custom_key')
+            entry = self.xml.get_object('entry_input_custom_key')
             entry.disconnect_by_func(self.on_entry_custom_key_changed)
             entry.set_text('')
-            entry = self.xml.get_widget('entry_output_custom_key')
+            entry = self.xml.get_object('entry_output_custom_key')
             entry.disconnect_by_func(self.on_entry_custom_key_changed)
             entry.set_text('')
-            entry = self.xml.get_widget('entry_left_thumb_shift_custom_key')
+            entry = self.xml.get_object('entry_left_thumb_shift_custom_key')
             entry.disconnect_by_func(self.on_entry_custom_key_changed)
-            entry = self.xml.get_widget('entry_right_thumb_shift_custom_key')
+            entry = self.xml.get_object('entry_right_thumb_shift_custom_key')
             entry.disconnect_by_func(self.on_entry_custom_key_changed)
-            button = self.xml.get_widget('button_add_custom_key')
+            button = self.xml.get_object('button_add_custom_key')
             button.disconnect_by_func(self.on_btn_add_custom_key)
-            button = self.xml.get_widget('button_remove_custom_key')
+            button = self.xml.get_object('button_remove_custom_key')
             button.disconnect_by_func(self.on_btn_remove_custom_key)
         combobox.clear()
         combobox.disconnect_by_func(self.on_cb_custom_key_table_changed)
 
     def __run_dialog_custom_key_table(self, mode):
         prefs = self.prefs
-        dlg = self.xml.get_widget('dialog_custom_key_table')
-        label = self.xml.get_widget('label_custom_key_table')
-        label_output = self.xml.get_widget('label_output_custom_key')
+        dlg = self.xml.get_object('dialog_custom_key_table')
+        label = self.xml.get_object('label_custom_key_table')
+        label_output = self.xml.get_object('label_output_custom_key')
         list_labels = []
         if mode == "romaji":
             dlg.set_title(_("Customize Romaji Key Table"))
@@ -461,7 +460,7 @@ class AnthySetup(object):
         for s in list_labels:
             ls.append([s[1], s[0]])
         renderer = gtk.CellRendererText()
-        combobox = self.xml.get_widget('combobox_custom_key_table')
+        combobox = self.xml.get_object('combobox_custom_key_table')
         combobox.pack_start(renderer, True)
         combobox.add_attribute(renderer, "text", 0)
         combobox.set_model(ls)
@@ -496,7 +495,7 @@ class AnthySetup(object):
         if self.__thumb_kb_layout_mode == None or \
            self.__thumb_kb_layout == None:
             return
-        section, key = self.__get_section_key(self.__thumb_kb_layout_mode.name)
+        section, key = self.__get_section_key(gtk.Buildable.get_name(self.__thumb_kb_layout_mode))
         layout_mode = self.prefs.get_value(section, key)
         if layout_mode:
             self.__thumb_kb_layout.set_sensitive(False)
@@ -504,9 +503,9 @@ class AnthySetup(object):
             self.__thumb_kb_layout.set_sensitive(True)
         if layout_mode and \
            not self.__config.get_value('general', 'use_system_keyboard_layout', True):
-            self.xml.get_widget('thumb:warning_hbox').show()
+            self.xml.get_object('thumb:warning_hbox').show()
         else:
-            self.xml.get_widget('thumb:warning_hbox').hide()
+            self.xml.get_object('thumb:warning_hbox').hide()
 
     def __get_dict_cli_from_list(self, cli_list):
             cli_str = cli_list[0]
@@ -576,7 +575,7 @@ class AnthySetup(object):
         reverse = prefs.get_value(section, 'reverse')
         if is_gettext:
             long_label = _(long_label)
-        l = self.xml.get_widget('dict:view').get_model()
+        l = self.xml.get_object('dict:view').get_model()
         l.append([id, short_label, long_label, embed, single, reverse])
 
     def __append_dicts_in_model(self):
@@ -626,13 +625,13 @@ class AnthySetup(object):
                                       gtk.MESSAGE_ERROR)
             return
 
-        single = self.xml.get_widget('dict:single').get_active()
-        embed = self.xml.get_widget('dict:embed').get_active()
-        reverse = self.xml.get_widget('dict:reverse').get_active()
-        short_label = self.xml.get_widget('dict:short_entry').get_text()
+        single = self.xml.get_object('dict:single').get_active()
+        embed = self.xml.get_object('dict:embed').get_active()
+        reverse = self.xml.get_object('dict:reverse').get_active()
+        short_label = self.xml.get_object('dict:short_entry').get_text()
         if len(unicode(short_label, "utf-8")) > 1:
             short_label = unicode(short_label, "utf-8")[0].encode("utf-8")
-        long_label = self.xml.get_widget('dict:long_entry').get_text()
+        long_label = self.xml.get_object('dict:long_entry').get_text()
 
         if new:
             files.append(file)
@@ -643,22 +642,22 @@ class AnthySetup(object):
         if long_label == None or long_label == "":
                 long_label = id
         self.__update_dict_values(new, id, short_label, long_label, embed, single, reverse)
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
         files = []
 
     def __init_dict_chooser_dialog(self):
-        self.xml.get_widget('dict:single').set_active(True)
-        self.xml.get_widget('dict:embed').set_active(False)
-        self.xml.get_widget('dict:reverse').set_active(False)
-        short_entry = self.xml.get_widget('dict:short_entry')
+        self.xml.get_object('dict:single').set_active(True)
+        self.xml.get_object('dict:embed').set_active(False)
+        self.xml.get_object('dict:reverse').set_active(False)
+        short_entry = self.xml.get_object('dict:short_entry')
         short_entry.set_text('')
         short_entry.set_editable(True)
-        long_entry = self.xml.get_widget('dict:long_entry')
+        long_entry = self.xml.get_object('dict:long_entry')
         long_entry.set_text('')
         long_entry.set_editable(True)
 
     def __get_selected_dict_id(self):
-        l, it = self.xml.get_widget('dict:view').get_selection().get_selected()
+        l, it = self.xml.get_object('dict:view').get_selection().get_selected()
 
         if not it:
             return None
@@ -681,12 +680,12 @@ class AnthySetup(object):
 
         if len(unicode(short_label, "utf-8")) > 1:
             short_label = unicode(short_label, "utf-8")[0].encode("utf-8")
-        self.xml.get_widget('dict:single').set_active(single)
-        self.xml.get_widget('dict:embed').set_active(embed)
-        self.xml.get_widget('dict:reverse').set_active(reverse)
-        short_entry = self.xml.get_widget('dict:short_entry')
+        self.xml.get_object('dict:single').set_active(single)
+        self.xml.get_object('dict:embed').set_active(embed)
+        self.xml.get_object('dict:reverse').set_active(reverse)
+        short_entry = self.xml.get_object('dict:short_entry')
         short_entry.set_text(short_label)
-        long_entry = self.xml.get_widget('dict:long_entry')
+        long_entry = self.xml.get_object('dict:long_entry')
         if is_system_dict:
             short_entry.set_editable(False)
             long_entry.set_text(_(long_label))
@@ -731,10 +730,10 @@ class AnthySetup(object):
                 long_label = prefs.get_value(section, 'long_label')
 
         if new:
-            l = self.xml.get_widget('dict:view').get_model()
+            l = self.xml.get_object('dict:view').get_model()
             l.append([id, short_label, long_label, embed, single, reverse])
         else:
-            l, i = self.xml.get_widget('dict:view').get_selection().get_selected()
+            l, i = self.xml.get_object('dict:view').get_selection().get_selected()
             if i :
                 l[i] = [id, short_label, long_label, embed, single, reverse]
 
@@ -750,23 +749,23 @@ class AnthySetup(object):
         prefs.set_value(section, key, reverse)
 
     def __text_cell_data_cb(self, layout, renderer, model, iter, id):
-        l = self.xml.get_widget('dict:view').get_model()
+        l = self.xml.get_object('dict:view').get_model()
         text = l.get_value(iter, id)
         renderer.set_property('text', text)
 
     def __toggle_cell_data_cb(self, layout, renderer, model, iter, id):
-        l = self.xml.get_widget('dict:view').get_model()
+        l = self.xml.get_object('dict:view').get_model()
         active = l.get_value(iter, id)
         renderer.set_property('active', active)
 
     def on_selection_changed(self, widget, id):
-        set_sensitive = lambda a, b: self.xml.get_widget(a).set_sensitive(b)
+        set_sensitive = lambda a, b: self.xml.get_object(a).set_sensitive(b)
         flg = True if widget.get_selected()[1] else False
         for name in [['btn_default', 'btn_edit'], ['button5', 'button6']][id]:
             set_sensitive(name, flg)
 
     def on_selection_custom_key_table_changed(self, widget, id):
-        button = self.xml.get_widget('button_remove_custom_key')
+        button = self.xml.get_object('button_remove_custom_key')
         button.set_sensitive(True)
 
     def on_main_delete(self, widget, event):
@@ -774,10 +773,10 @@ class AnthySetup(object):
         return True
 
     def on_btn_ok_clicked(self, widget):
-        if self.xml.get_widget('btn_apply').state == gtk.STATE_INSENSITIVE:
+        if self.xml.get_object('btn_apply').get_state() == gtk.STATE_INSENSITIVE:
             gtk.main_quit()
             return True
-        dlg = self.xml.get_widget('quit_check')
+        dlg = self.xml.get_object('quit_check')
         dlg.set_markup('<big><b>%s</b></big>' % _('Confirm'))
         dlg.format_secondary_text(_('Are you sure to close Setup?'))
         id = dlg.run()
@@ -788,10 +787,10 @@ class AnthySetup(object):
             return True
 
     def on_btn_cancel_clicked(self, widget):
-        if self.xml.get_widget('btn_apply').state == gtk.STATE_INSENSITIVE:
+        if self.xml.get_object('btn_apply').get_state() == gtk.STATE_INSENSITIVE:
             gtk.main_quit()
             return True
-        dlg = self.xml.get_widget('quit_check_without_save')
+        dlg = self.xml.get_object('quit_check_without_save')
         dlg.set_markup('<big><b>%s</b></big>' % _('Notice!'))
         dlg.format_secondary_text(_('Are you sure to close Setup without save configure?'))
         id = dlg.run()
@@ -805,12 +804,12 @@ class AnthySetup(object):
         widget.set_sensitive(False)
 
     def on_cb_changed(self, widget):
-        section, key = self.__get_section_key(widget.name)
+        section, key = self.__get_section_key(gtk.Buildable.get_name(widget))
         self.prefs.set_value(section, key, widget.get_active())
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_cb_custom_key_table_changed(self, widget, user_data):
-        tv = self.xml.get_widget('treeview_custom_key_table')
+        tv = self.xml.get_object('treeview_custom_key_table')
         mode = user_data
         id = widget.get_active()
         model = widget.get_model()
@@ -828,28 +827,28 @@ class AnthySetup(object):
             tv = self.__get_thumb_treeview_custom_key_table(method)
 
     def on_sb_changed(self, widget):
-        section, key = self.__get_section_key(widget.name)
+        section, key = self.__get_section_key(gtk.Buildable.get_name(widget))
         self.prefs.set_value(section, key, widget.get_value_as_int())
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_ck_toggled(self, widget):
-        section, key = self.__get_section_key(widget.name)
+        section, key = self.__get_section_key(gtk.Buildable.get_name(widget))
         self.prefs.set_value(section, key, widget.get_active())
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
         if self.__thumb_kb_layout_mode and \
-           widget.name == self.__thumb_kb_layout_mode.name:
+           gtk.Buildable.get_name(widget) == gtk.Buildable.get_name(self.__thumb_kb_layout_mode):
             self.__set_thumb_kb_label()
 
     def on_btn_edit_clicked(self, widget):
-        ls, it = self.xml.get_widget('shortcut').get_selection().get_selected()
-        m = self.xml.get_widget('treeview2').get_model()
+        ls, it = self.xml.get_object('shortcut').get_selection().get_selected()
+        m = self.xml.get_object('treeview2').get_model()
         m.clear()
         for s in s_to_l(ls.get(it, 1)[0]):
             m.append([s])
-        self.xml.get_widget('entry2').set_text('')
+        self.xml.get_object('entry2').set_text('')
         for w in ['checkbutton6', 'checkbutton7', 'checkbutton8']:
-            self.xml.get_widget(w).set_active(False)
-        dlg = self.xml.get_widget('edit_shortcut')
+            self.xml.get_object(w).set_active(False)
+        dlg = self.xml.get_object('edit_shortcut')
         id = dlg.run()
         dlg.hide()
         if id == gtk.RESPONSE_OK:
@@ -858,16 +857,16 @@ class AnthySetup(object):
                 sec = self._get_shortcut_sec()
                 self.prefs.set_value(sec, ls.get(it, 0)[0], s_to_l(new))
                 ls.set(it, 1, new)
-                self.xml.get_widget('btn_apply').set_sensitive(True)
+                self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_btn_default_clicked(self, widget):
-        ls, it = self.xml.get_widget('shortcut').get_selection().get_selected()
+        ls, it = self.xml.get_object('shortcut').get_selection().get_selected()
         sec = self._get_shortcut_sec()
         new = l_to_s(self.prefs.default[sec][ls.get(it, 0)[0]])
         if new != ls.get(it, 1)[0]:
             self.prefs.set_value(sec, ls.get(it, 0)[0], s_to_l(new))
             ls.set(it, 1, new)
-            self.xml.get_widget('btn_apply').set_sensitive(True)
+            self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_btn_romaji_custom_table_clicked(self, widget):
         self.__run_dialog_custom_key_table("romaji")
@@ -880,12 +879,12 @@ class AnthySetup(object):
 
     def on_btn_add_custom_key(self, widget, user_data):
         prefs = self.prefs
-        input = self.xml.get_widget('entry_input_custom_key')
-        output = self.xml.get_widget('entry_output_custom_key')
-        left = self.xml.get_widget('entry_left_thumb_shift_custom_key')
-        right = self.xml.get_widget('entry_right_thumb_shift_custom_key')
-        model = self.xml.get_widget('treeview_custom_key_table').get_model()
-        combobox = self.xml.get_widget('combobox_custom_key_table')
+        input = self.xml.get_object('entry_input_custom_key')
+        output = self.xml.get_object('entry_output_custom_key')
+        left = self.xml.get_object('entry_left_thumb_shift_custom_key')
+        right = self.xml.get_object('entry_right_thumb_shift_custom_key')
+        model = self.xml.get_object('treeview_custom_key_table').get_model()
+        combobox = self.xml.get_object('combobox_custom_key_table')
         id = combobox.get_active()
         model_combobox = combobox.get_model()
         method = model_combobox[id][1]
@@ -939,11 +938,11 @@ class AnthySetup(object):
             right.set_text('')
         input.set_text('')
         output.set_text('')
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_btn_remove_custom_key(self, widget, user_data):
         prefs = self.prefs
-        combobox = self.xml.get_widget('combobox_custom_key_table')
+        combobox = self.xml.get_object('combobox_custom_key_table')
         id = combobox.get_active()
         model_combobox = combobox.get_model()
         method = model_combobox[id][1]
@@ -973,47 +972,47 @@ class AnthySetup(object):
             prefs.set_value(section, key, ['', '', ''])
         l.remove(i)
         widget.set_sensitive(False)
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_btn_thumb_key_clicked(self, widget):
-        if widget.name == 'thumb:button_ls':
+        if gtk.Buildable.get_name(widget) == 'thumb:button_ls':
             entry = 'thumb:ls'
-        elif widget.name == 'thumb:button_rs':
+        elif gtk.Buildable.get_name(widget) == 'thumb:button_rs':
             entry = 'thumb:rs'
         else:
             return
-        text = self.xml.get_widget(entry).get_text()
-        m = self.xml.get_widget('treeview2').get_model()
+        text = self.xml.get_object(entry).get_text()
+        m = self.xml.get_object('treeview2').get_model()
         m.clear()
         if text != None:
             m.append([text])
             i = m.get_iter_first()
-            self.xml.get_widget('treeview2').get_selection().select_iter(i)
-        self.xml.get_widget('entry2').set_text('')
-        self.xml.get_widget('button4').hide()
-        self.xml.get_widget('button5').show()
-        self.xml.get_widget('button6').hide()
+            self.xml.get_object('treeview2').get_selection().select_iter(i)
+        self.xml.get_object('entry2').set_text('')
+        self.xml.get_object('button4').hide()
+        self.xml.get_object('button5').show()
+        self.xml.get_object('button6').hide()
         for w in ['checkbutton6', 'checkbutton7', 'checkbutton8']:
-            self.xml.get_widget(w).set_active(False)
-        dlg = self.xml.get_widget('edit_shortcut')
+            self.xml.get_object(w).set_active(False)
+        dlg = self.xml.get_object('edit_shortcut')
         id = dlg.run()
         dlg.hide()
-        self.xml.get_widget('button4').show()
-        self.xml.get_widget('button5').hide()
-        self.xml.get_widget('button6').show()
+        self.xml.get_object('button4').show()
+        self.xml.get_object('button5').hide()
+        self.xml.get_object('button6').show()
         if id == gtk.RESPONSE_OK:
-            l, i = self.xml.get_widget('treeview2').get_selection().get_selected()
+            l, i = self.xml.get_object('treeview2').get_selection().get_selected()
             new = l[i][0]
             if new != text:
                 section, key = self.__get_section_key(entry)
                 self.prefs.set_value(section, key, new)
-                self.xml.get_widget(entry).set_text(new)
-                self.xml.get_widget('btn_apply').set_sensitive(True)
+                self.xml.get_object(entry).set_text(new)
+                self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_btn_dict_command_clicked(self, widget):
-        if widget.name == 'dict:btn_edit_dict_command':
+        if gtk.Buildable.get_name(widget) == 'dict:btn_edit_dict_command':
             key = 'dict_admin_command'
-        elif widget.name == 'dict:btn_add_word_command':
+        elif gtk.Buildable.get_name(widget) == 'dict:btn_add_word_command':
             key = 'add_word_command'
         else:
             return
@@ -1028,25 +1027,25 @@ class AnthySetup(object):
         file = None
         id = None
 
-        if widget.name == "dict:btn_add":
+        if gtk.Buildable.get_name(widget) == "dict:btn_add":
             dlg = gtk.FileChooserDialog(title=_("Open Dictionary File"),
-                                        parent=self.xml.get_widget('main'),
+                                        parent=self.xml.get_object('main'),
                                         action=gtk.FILE_CHOOSER_ACTION_OPEN,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                                  gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        if widget.name == "dict:btn_edit":
+        if gtk.Buildable.get_name(widget) == "dict:btn_edit":
             dlg = gtk.Dialog(title=_("Edit Dictionary File"),
-                             parent=self.xml.get_widget('main'),
+                             parent=self.xml.get_object('main'),
                              flags='modal',
                              buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                       gtk.STOCK_OK, gtk.RESPONSE_OK))
 
-        vbox = self.xml.get_widget('dict:add_extra_vbox')
-        if widget.name == "dict:btn_add":
+        vbox = self.xml.get_object('dict:add_extra_vbox')
+        if gtk.Buildable.get_name(widget) == "dict:btn_add":
             # Need to init for the second time
             self.__init_dict_chooser_dialog()
             dlg.set_extra_widget(vbox)
-        if widget.name == "dict:btn_edit":
+        if gtk.Buildable.get_name(widget) == "dict:btn_edit":
             id = self.__set_selected_dict_to_dialog()
             if id == None:
                 self.__run_message_dialog(_("Your choosed file is not correct."),
@@ -1057,19 +1056,19 @@ class AnthySetup(object):
         vbox.show_all()
 
         if dlg.run() == gtk.RESPONSE_OK:
-            if widget.name == "dict:btn_add":
+            if gtk.Buildable.get_name(widget) == "dict:btn_add":
                 file = dlg.get_filename()
                 if file[0] != '/':
                     dir = dlg.get_current_folder()
                     file = dir + "/" + file
                 self.__append_user_dict_from_dialog(file, None, True)
-            elif widget.name == "dict:btn_edit":
+            elif gtk.Buildable.get_name(widget) == "dict:btn_edit":
                 self.__append_user_dict_from_dialog(None, id, False)
         dlg.hide()
         vbox.unparent()
 
     def on_btn_dict_delete_clicked(self, widget):
-        l, i = self.xml.get_widget('dict:view').get_selection().get_selected()
+        l, i = self.xml.get_object('dict:view').get_selection().get_selected()
 
         if not i:
             return
@@ -1087,7 +1086,7 @@ class AnthySetup(object):
             files = self.prefs.get_value('dict', 'files')
             files.remove(file)
             self.prefs.set_value('dict', 'files', files)
-            self.xml.get_widget('btn_apply').set_sensitive(True)
+            self.xml.get_object('btn_apply').set_sensitive(True)
             l.remove(i)
             return
 
@@ -1131,7 +1130,7 @@ class AnthySetup(object):
             lines = unicode(lines, encoding).encode('utf-8')
 
         dlg = gtk.Dialog(title=_("View Dictionary File"),
-                         parent=self.xml.get_widget('main'),
+                         parent=self.xml.get_object('main'),
                          flags='modal',
                          buttons=(gtk.STOCK_OK, gtk.RESPONSE_OK))
         buffer = gtk.TextBuffer()
@@ -1149,18 +1148,18 @@ class AnthySetup(object):
 
     def on_btn_dict_order_clicked(self, widget):
         dict_file = None
-        l, it = self.xml.get_widget('dict:view').get_selection().get_selected()
+        l, it = self.xml.get_object('dict:view').get_selection().get_selected()
 
         if not it:
             return
         selected_path = l.get_path(it)
         selected_id = l.get_value(it, 0)
 
-        if widget.name == "dict:btn_up":
+        if gtk.Buildable.get_name(widget) == "dict:btn_up":
             if selected_path[0] <= 0:
                 return
             next_path = (selected_path[0] - 1, )
-        elif widget.name == "dict:btn_down":
+        elif gtk.Buildable.get_name(widget) == "dict:btn_down":
             if selected_path[0] + 1 >= len(l):
                 return
             next_path = (selected_path[0] + 1, )
@@ -1175,11 +1174,11 @@ class AnthySetup(object):
             return
 
         i = files.index(dict_file)
-        if widget.name == "dict:btn_up":
+        if gtk.Buildable.get_name(widget) == "dict:btn_up":
             if i <= 0:
                 return
             next_i = i - 1
-        elif widget.name == "dict:btn_down":
+        elif gtk.Buildable.get_name(widget) == "dict:btn_down":
             if i + 1 >= len(dict_file):
                 return
             next_i = i + 1
@@ -1187,15 +1186,15 @@ class AnthySetup(object):
         files[i] = files[next_i]
         files[next_i] = f
         self.prefs.set_value('dict', 'files', files)
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
 
     def _get_shortcut_sec(self):
         l = ['default', 'atok', 'wnn']
-        s_type = self.xml.get_widget('shortcut_type').get_active_text().lower()
+        s_type = self.xml.get_object('shortcut_type').get_active_text().lower()
         return 'shortcut/' + (s_type if s_type in l else 'default')
 
     def on_shortcut_type_changed(self, widget):
-        ls = self.xml.get_widget('shortcut').get_model()
+        ls = self.xml.get_object('shortcut').get_model()
         ls.clear()
 
         for a in widget.get_model():
@@ -1205,9 +1204,9 @@ class AnthySetup(object):
         for k in self.prefs.keys(sec):
             ls.append([k, l_to_s(self.prefs.get_value(sec, k))])
 
-        section, key = self.__get_section_key(widget.name)
+        section, key = self.__get_section_key(gtk.Buildable.get_name(widget))
         self.prefs.set_value(section, key, sec[len('shortcut/'):])
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_shortcut_key_release_event(self, widget, event):
         if event.hardware_keycode in [36, 65]:
@@ -1231,11 +1230,11 @@ class AnthySetup(object):
 
     def on_entry_custom_key_changed(self, widget, user_data):
         mode = user_data
-        input = self.xml.get_widget('entry_input_custom_key')
-        output = self.xml.get_widget('entry_output_custom_key')
-        left = self.xml.get_widget('entry_left_thumb_shift_custom_key')
-        right = self.xml.get_widget('entry_right_thumb_shift_custom_key')
-        button = self.xml.get_widget('button_add_custom_key')
+        input = self.xml.get_object('entry_input_custom_key')
+        output = self.xml.get_object('entry_output_custom_key')
+        left = self.xml.get_object('entry_left_thumb_shift_custom_key')
+        right = self.xml.get_object('entry_right_thumb_shift_custom_key')
+        button = self.xml.get_object('button_add_custom_key')
         if mode != "thumb":
             if input.get_text() != "" and output.get_text() != "":
                 button.set_sensitive(True)
@@ -1263,23 +1262,23 @@ class AnthySetup(object):
             else:
                 list.insert(0, '/usr/bin/' + list[0])
                 list[1] = list[1][list[1].rfind('/') + 1:]
-        if widget.name == 'dict:entry_edit_dict_command':
+        if gtk.Buildable.get_name(widget) == 'dict:entry_edit_dict_command':
             key = 'dict_admin_command'
-        elif widget.name == 'dict:entry_add_word_command':
+        elif gtk.Buildable.get_name(widget) == 'dict:entry_add_word_command':
             key = 'add_word_command'
         else:
             return
         self.prefs.set_value('common', key, list)
-        self.xml.get_widget('btn_apply').set_sensitive(True)
+        self.xml.get_object('btn_apply').set_sensitive(True)
 
     def on_entry2_changed(self, widget):
         if not widget.get_text():
-            self.xml.get_widget('button4').set_sensitive(False)
+            self.xml.get_object('button4').set_sensitive(False)
         else:
-            self.xml.get_widget('button4').set_sensitive(True)
+            self.xml.get_object('button4').set_sensitive(True)
 
     def on_button7_clicked(self, widget):
-        dlg = self.xml.get_widget('key_input_dialog')
+        dlg = self.xml.get_object('key_input_dialog')
         dlg.set_markup('<big><b>%s</b></big>' % _('Please press a key (or a key combination)'))
         dlg.format_secondary_text(_('The dialog will be closed when the key is released'))
         id = dlg.run()
@@ -1289,17 +1288,17 @@ class AnthySetup(object):
             if (state & (modifier.CONTROL_MASK | modifier.ALT_MASK) and
                     ord('a') <= key <= ord('z')):
                 key = ord(chr(key).upper())
-            self.xml.get_widget('entry2').set_text(keysyms.keycode_to_name(key))
+            self.xml.get_object('entry2').set_text(keysyms.keycode_to_name(key))
 
             for w, i in [('checkbutton6', modifier.CONTROL_MASK),
                          ('checkbutton7', modifier.ALT_MASK),
                          ('checkbutton8', modifier.SHIFT_MASK)]:
-                self.xml.get_widget(w).set_active(True if state & i else False)
+                self.xml.get_object(w).set_active(True if state & i else False)
 
     def on_button4_clicked(self, widget):
-        s = self.xml.get_widget('entry2').get_text()
+        s = self.xml.get_object('entry2').get_text()
         if not s or not keysyms.name_to_keycode(s):
-            dlg = self.xml.get_widget('invalid_keysym')
+            dlg = self.xml.get_object('invalid_keysym')
             dlg.set_markup('<big><b>%s</b></big>' % _('Invalid keysym'))
             dlg.format_secondary_text(_('This keysym is not valid'))
             dlg.run()
@@ -1308,18 +1307,18 @@ class AnthySetup(object):
         for w, m in [('checkbutton6', 'Ctrl+'),
                      ('checkbutton7', 'Alt+'),
                      ('checkbutton8', 'Shift+')]:
-            if self.xml.get_widget(w).get_active():
+            if self.xml.get_object(w).get_active():
                 s = m + s
-        l = self.xml.get_widget('treeview2').get_model()
+        l = self.xml.get_object('treeview2').get_model()
         for i in range(len(l)):
             if l[i][0] == s:
                 return True
         l.append([s])
 
     def on_button5_clicked(self, widget):
-        s = self.xml.get_widget('entry2').get_text()
+        s = self.xml.get_object('entry2').get_text()
         if not s or not keysyms.name_to_keycode(s):
-            dlg = self.xml.get_widget('invalid_keysym')
+            dlg = self.xml.get_object('invalid_keysym')
             dlg.set_markup('<big><b>%s</b></big>' % _('Invalid keysym'))
             dlg.format_secondary_text(_('This keysym is not valid'))
             dlg.run()
@@ -1328,14 +1327,14 @@ class AnthySetup(object):
         for w, m in [('checkbutton6', 'Ctrl+'),
                      ('checkbutton7', 'Alt+'),
                      ('checkbutton8', 'Shift+')]:
-            if self.xml.get_widget(w).get_active():
+            if self.xml.get_object(w).get_active():
                 s = m + s
-        l, i = self.xml.get_widget('treeview2').get_selection().get_selected()
+        l, i = self.xml.get_object('treeview2').get_selection().get_selected()
         l[i][0] = s
         return True
 
     def on_button6_clicked(self, widget):
-        l, i = self.xml.get_widget('treeview2').get_selection().get_selected()
+        l, i = self.xml.get_object('treeview2').get_selection().get_selected()
         if i:
             l.remove(i)
 

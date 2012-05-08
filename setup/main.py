@@ -23,12 +23,14 @@
 
 from os import environ, getuid, path
 import os, sys
-from gettext import dgettext, bindtextdomain
+import locale
+import gettext
+from gettext import dgettext
 
 try:
     from locale import getpreferredencoding
 except:
-    pass
+    getpreferredencoding = None
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -38,6 +40,7 @@ from gi.repository import IBus
 import _config as config
 from anthyprefs import AnthyPrefs
 
+DOMAINNAME = 'ibus-anthy'
 _ = lambda a : dgettext('ibus-anthy', a)
 
 def l_to_s(l):
@@ -49,10 +52,18 @@ def s_to_l(s):
 
 class AnthySetup(object):
     def __init__(self):
-        bindtextdomain('ibus-anthy', config.LOCALEDIR)
+        # Python's locale module doesn't provide all methods on some
+        # operating systems like FreeBSD
+        try:
+            locale.bindtextdomain(DOMAINNAME, config.LOCALEDIR)
+            locale.bind_textdomain_codeset(DOMAINNAME, 'UTF-8')
+        except AttributeError:
+            pass
+        gettext.bindtextdomain(DOMAINNAME, config.LOCALEDIR)
+        gettext.bind_textdomain_codeset(DOMAINNAME, 'UTF-8')
         builder_file = path.join(path.dirname(__file__), 'setup.ui')
         self.__builder = builder = Gtk.Builder()
-        builder.set_translation_domain('ibus-anthy')
+        builder.set_translation_domain(DOMAINNAME)
         builder.add_from_file(builder_file)
 
         if IBus.get_address() == None:
@@ -197,7 +208,8 @@ class AnthySetup(object):
 
         about_dialog.set_version(self.prefs.get_version())
         try:
-            if getpreferredencoding().lower() == 'utf-8':
+            if getpreferredencoding != None and \
+                getpreferredencoding().lower() == 'utf-8':
                 copyright = about_dialog.get_copyright()
                 copyright = copyright.replace('(c)', '\xc2\xa9')
                 copyright = copyright.replace('-', '\xe2\x80\x93')

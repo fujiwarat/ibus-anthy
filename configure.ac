@@ -264,9 +264,9 @@ fi
 AC_SUBST(HOTKEYS_XML)
 
 SYMBOL_CHAR='&#x3042;'
-SYMBOL_TEST="import ibus
-engine = ibus.EngineDesc('test')
-exit(not hasattr(engine, 'symbol'))
+SYMBOL_TEST="from gi.repository import IBus
+engine = IBus.EngineDesc(name='test')
+exit(not hasattr(engine, 'get_symbol'))
 "
 $PYTHON -c "$SYMBOL_TEST"
 if test $? -eq 0; then

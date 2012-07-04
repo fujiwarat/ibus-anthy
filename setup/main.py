@@ -548,33 +548,38 @@ class AnthySetup(object):
                     has_mbcs = True
                     break
             if has_mbcs:
-                import urllib
-                id = urllib.quote(id)
+                id = id.encode('hex')
 
             if id.find('/') >=0:
                 id = id[id.rindex('/') + 1:]
             if id.find('.') >=0:
                 id = id[:id.rindex('.')]
+
+            if id.startswith('0x'):
+                id = id.encode('hex')
+                has_mbcs = True
+            if has_mbcs:
+                id = '0x' + id
             return id
 
     def __get_dict_file_from_id(self, selected_id):
-        found = False
-        files = self.prefs.get_value('dict', 'files')
-
         if selected_id == 'anthy_zipcode':
             return self.prefs.get_value('dict', 'anthy_zipcode')[0]
         elif selected_id == 'ibus_symbol':
             return self.prefs.get_value('dict', 'ibus_symbol')[0]
         elif selected_id == 'ibus_oldchar':
             return self.prefs.get_value('dict', 'ibus_oldchar')[0]
+
+        files = self.prefs.get_value('dict', 'files')
+        retval = None
+
         for file in files:
             id = self.__get_quoted_id(file)
+            # The selected_id is already quoted.
             if selected_id == id:
-                found = True
+                retval = file
                 break
-        if found:
-            return file
-        return None
+        return retval
 
     def __is_system_dict_file_from_id(self, selected_id):
         prefs = self.prefs
@@ -1139,6 +1144,7 @@ class AnthySetup(object):
         if dict_file == None:
             return
 
+        # The selected id is already quoted.
         section = 'dict/file/' + selected_id
         if 'preview_lines' not in self.prefs.keys(section):
             section = 'dict/file/default'

@@ -831,10 +831,12 @@ class Engine(IBus.Engine):
         i = prop_name.find('.')
         if i < 0:
             return
-        id = prop_name[i + 1:].encode('utf-8')
+        # The id is already quoted.
+        id = prop_name[i + 1:]
 
         file = None
-        files = self.__prefs.get_value('dict', 'files')
+        single_files = self.__get_single_dict_files()
+
         if id == 'embedded':
             pass
         elif id == 'anthy_zipcode' or id == 'ibus_symbol' or \
@@ -842,7 +844,7 @@ class Engine(IBus.Engine):
             file = self.__prefs.get_value('dict', id)[0]
         else:
             found = False
-            for file in files:
+            for file in single_files:
                 if id == self._get_quoted_id(file):
                     found = True
                     break
@@ -853,12 +855,16 @@ class Engine(IBus.Engine):
             dict_name = 'default'
             self.__dict_mode = 0
         else:
+            if file not in single_files:
+                print >> sys.stderr, "Index error ", file, single_files
+                return
             dict_name = 'ibus__' + id
-            self.__dict_mode = files.index(file) + 1
+            self.__dict_mode = single_files.index(file) + 1
         self.__prop_dict[prop_name].set_state(state)
         self.update_property(self.__prop_dict[prop_name])
         self.__context.init_personality()
-        self.__context.do_set_personality(dict_name)
+        # dict_name is unicode but the argument is str.
+        self.__context.do_set_personality(str(dict_name))
 
         prop = self.__prop_dict[u'DictMode']
         section = 'dict/file/' + id
@@ -1648,13 +1654,18 @@ class Engine(IBus.Engine):
                     has_mbcs = True
                     break
         if has_mbcs:
-            import urllib
-            id = urllib.quote(id)
+            id = id.encode('hex')
 
         if id.find('/') >=0:
             id = id[id.rindex('/') + 1:]
         if id.find('.') >=0:
             id = id[:id.rindex('.')]
+
+        if id.startswith('0x'):
+            id = id.encode('hex')
+            has_mbcs = True
+        if has_mbcs:
+            id = '0x' + id
         return id
 
     @classmethod

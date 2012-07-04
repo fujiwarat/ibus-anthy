@@ -525,33 +525,39 @@ class AnthySetup(object):
                     has_mbcs = True
                     break
             if has_mbcs:
-                import urllib
-                id = urllib.quote(id)
+                id = id.encode('hex')
 
             if id.find('/') >=0:
                 id = id[id.rindex('/') + 1:]
             if id.find('.') >=0:
                 id = id[:id.rindex('.')]
+
+            if id.startswith('0x'):
+                id = id.encode('hex')
+                has_mbcs = True
+            if has_mbcs:
+                id = '0x' + id
             return id
 
     def __get_dict_file_from_id(self, selected_id):
-        found = False
-        files = self.prefs.get_value('dict', 'files')
-
         if selected_id == 'anthy_zipcode':
             return self.prefs.get_value('dict', 'anthy_zipcode')[0]
         elif selected_id == 'ibus_symbol':
             return self.prefs.get_value('dict', 'ibus_symbol')[0]
         elif selected_id == 'ibus_oldchar':
             return self.prefs.get_value('dict', 'ibus_oldchar')[0]
+
+        files = self.prefs.get_value('dict', 'files')
+        retval = None
+
         for file in files:
+            file = str(file)
             id = self.__get_quoted_id(file)
+            # The selected_id is already quoted.
             if selected_id == id:
-                found = True
+                retval = file
                 break
-        if found:
-            return file
-        return None
+        return retval
 
     def __is_system_dict_file_from_id(self, selected_id):
         prefs = self.prefs
@@ -583,6 +589,7 @@ class AnthySetup(object):
     def __append_dicts_in_model(self):
         prefs = self.prefs
         for file in prefs.get_value('dict', 'files'):
+            file = str(file)
             if not path.exists(file):
                 continue
             if file in prefs.get_value('dict', 'anthy_zipcode'):
@@ -1085,7 +1092,10 @@ class AnthySetup(object):
 
         file = self.__get_dict_file_from_id(selected_id)
         if file != None:
-            files = self.prefs.get_value('dict', 'files')
+            files = []
+            values = self.prefs.get_value('dict', 'files')
+            for dbus_file in values:
+                files.append(str(dbus_file))
             files.remove(file)
             self.prefs.set_value('dict', 'files', files)
             self.xml.get_widget('btn_apply').set_sensitive(True)
@@ -1113,6 +1123,7 @@ class AnthySetup(object):
         if dict_file == None:
             return
 
+        # The selected id is already quoted.
         section = 'dict/file/' + selected_id
         if 'preview_lines' not in self.prefs.keys(section):
             section = 'dict/file/default'
@@ -1170,7 +1181,10 @@ class AnthySetup(object):
             l.swap(it, next_it)
 
         dict_file = self.__get_dict_file_from_id(selected_id)
-        files = self.prefs.get_value('dict', 'files')
+        files = []
+        values = self.prefs.get_value('dict', 'files')
+        for dbus_file in values:
+            files.append(str(dbus_file))
 
         if dict_file == None:
             return

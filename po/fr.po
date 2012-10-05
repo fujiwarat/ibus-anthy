@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ibus-anthy 1.2\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/ibus/issues/entry\n"
 "POT-Creation-Date: 2012-10-05 21:25+0900\n"
-"PO-Revision-Date: 2012-07-10 11:37+0900\n"
+"PO-Revision-Date: 2012-10-05 18:26+0100\n"
 "Last-Translator: Julien Humbert <julroy67@gmail.com>\n"
 "Language-Team: French <kde-i18n-doc@kde.org>\n"
 "Language: fr\n"
@@ -21,61 +21,75 @@ msgstr ""
 
 #. Translators: Specify the order of %s with your translation.
 #. It will be "Input Mode (A)" for example.
-#: ../engine/engine.py:203 ../engine/engine.py:277 ../engine/engine.py:354
-#: ../engine/engine.py:419 ../engine/engine.py:741 ../engine/engine.py:769
-#: ../engine/engine.py:790 ../engine/engine.py:816 ../engine/engine.py:883
+#: ../engine/engine.py:203
+#: ../engine/engine.py:277
+#: ../engine/engine.py:354
+#: ../engine/engine.py:419
+#: ../engine/engine.py:741
+#: ../engine/engine.py:769
+#: ../engine/engine.py:790
+#: ../engine/engine.py:816
+#: ../engine/engine.py:883
 #, python-format
 msgid "%(description)s (%(symbol)s)"
-msgstr ""
+msgstr "%(description)s (%(symbol)s)"
 
-#: ../engine/engine.py:204 ../engine/engine.py:742
-#, fuzzy
+#: ../engine/engine.py:204
+#: ../engine/engine.py:742
 msgid "Input mode"
-msgstr "Méthode d'E_ntrée :"
+msgstr "Mode de saisie"
 
 #: ../engine/engine.py:210
 msgid "Switch input mode"
-msgstr "Changer de méthode d'entrée"
+msgstr "Changer de mode de saisie"
 
-#: ../engine/engine.py:220 ../setup/setup.ui.h:1
+#: ../engine/engine.py:220
+#: ../setup/setup.ui.h:1
 msgid "Hiragana"
 msgstr "Hiragana"
 
-#: ../engine/engine.py:229 ../setup/setup.ui.h:2
+#: ../engine/engine.py:229
+#: ../setup/setup.ui.h:2
 msgid "Katakana"
 msgstr "Katakana"
 
-#: ../engine/engine.py:238 ../setup/setup.ui.h:3
+#: ../engine/engine.py:238
+#: ../setup/setup.ui.h:3
 msgid "Halfwidth Katakana"
-msgstr "Halfwidth Katakana"
+msgstr "Katakana demi-largeur"
 
-#: ../engine/engine.py:247 ../setup/setup.ui.h:4
+#: ../engine/engine.py:247
+#: ../setup/setup.ui.h:4
 msgid "Latin"
-msgstr "Latin"
+msgstr "Alphabet"
 
-#: ../engine/engine.py:256 ../setup/setup.ui.h:5
+#: ../engine/engine.py:256
+#: ../setup/setup.ui.h:5
 msgid "Wide Latin"
-msgstr "Latin large"
+msgstr "Alphabet pleine largeur"
 
-#: ../engine/engine.py:278 ../engine/engine.py:770 ../engine/engine.py:791
-#, fuzzy
+#: ../engine/engine.py:278
+#: ../engine/engine.py:770
+#: ../engine/engine.py:791
 msgid "Typing method"
-msgstr "Méthode d'Écri_ture"
+msgstr "Méthode de saisie"
 
 #: ../engine/engine.py:284
-#, fuzzy
 msgid "Switch typing method"
-msgstr "Changer de méthode d'écriture"
+msgstr "Changer de méthode de saisie"
 
-#: ../engine/engine.py:294 ../setup/setup.ui.h:12
+#: ../engine/engine.py:294
+#: ../setup/setup.ui.h:12
 msgid "Romaji"
 msgstr "Romaji"
 
-#: ../engine/engine.py:303 ../setup/setup.ui.h:13
+#: ../engine/engine.py:303
+#: ../setup/setup.ui.h:13
 msgid "Kana"
 msgstr "Kana"
 
-#: ../engine/engine.py:312 ../setup/setup.ui.h:14
+#: ../engine/engine.py:312
+#: ../setup/setup.ui.h:14
 msgid "Thumb shift"
 msgstr "Thumb shift"
 
@@ -87,34 +101,39 @@ msgstr "Préférences – Anthy"
 msgid "Configure Anthy"
 msgstr "Configurer Anthy"
 
-#: ../engine/engine.py:355 ../engine/engine.py:817
+#: ../engine/engine.py:355
+#: ../engine/engine.py:817
 msgid "Segment mode"
-msgstr ""
+msgstr "Mode segments"
 
 #: ../engine/engine.py:361
 msgid "Switch conversion mode"
 msgstr "Changer de méthode de conversion"
 
-#: ../engine/engine.py:371 ../setup/setup.ui.h:15
+#: ../engine/engine.py:371
+#: ../setup/setup.ui.h:15
 msgid "Multiple segment"
 msgstr "Segments multiples"
 
-#: ../engine/engine.py:380 ../setup/setup.ui.h:16
+#: ../engine/engine.py:380
+#: ../setup/setup.ui.h:16
 msgid "Single segment"
 msgstr "Segments simples"
 
-#: ../engine/engine.py:389 ../setup/setup.ui.h:17
+#: ../engine/engine.py:389
+#: ../setup/setup.ui.h:17
 msgid "Immediate conversion (multiple segment)"
 msgstr "Conversion immédiate (segments multiples)"
 
-#: ../engine/engine.py:398 ../setup/setup.ui.h:18
+#: ../engine/engine.py:398
+#: ../setup/setup.ui.h:18
 msgid "Immediate conversion (single segment)"
 msgstr "Conversion immédiate (segments simples)"
 
-#: ../engine/engine.py:420 ../engine/engine.py:884
-#, fuzzy
+#: ../engine/engine.py:420
+#: ../engine/engine.py:884
 msgid "Dictionary mode"
-msgstr "_Dictionnaire"
+msgstr "Mode dictionnaire"
 
 #: ../engine/engine.py:426
 msgid "Switch dictionary"
@@ -155,7 +174,7 @@ msgstr "Général"
 
 #: ../setup/anthyprefs.py.in:859
 msgid "Zip Code Conversion"
-msgstr "Conversion de Codes Postaux"
+msgstr "Conversion en Codes Postaux"
 
 #: ../setup/anthyprefs.py.in:871
 msgid "Symbol"
@@ -167,12 +186,11 @@ msgstr "Anciens caractères"
 
 #: ../setup/ibus-setup-anthy.desktop.in.in.h:1
 msgid "IBus Anthy Setup"
-msgstr ""
+msgstr "Configuration d'IBus Anthy"
 
 #: ../setup/ibus-setup-anthy.desktop.in.in.h:2
-#, fuzzy
 msgid "Set up IBus Anthy engine"
-msgstr "Configuration – IBus-Anthy"
+msgstr "Configuration du moteur IBus Anthy"
 
 #. self.__run_message_dialog needs self.__builder.
 #: ../setup/main.py:85
@@ -201,11 +219,13 @@ msgstr "Embarqué"
 msgid "Sgl"
 msgstr "Seul"
 
-#: ../setup/main.py:341 ../setup/main.py:370
+#: ../setup/main.py:341
+#: ../setup/main.py:370
 msgid "Input Chars"
 msgstr "Caractères d'entrée"
 
-#: ../setup/main.py:343 ../setup/main.py:372
+#: ../setup/main.py:343
+#: ../setup/main.py:372
 msgid "Output Chars"
 msgstr "Caractères de sortie"
 
@@ -229,16 +249,21 @@ msgstr "Droite"
 msgid "Customize Romaji Key Table"
 msgstr "Modifier la table des touches Romaji"
 
-#: ../setup/main.py:493 ../setup/setup.ui.h:49
+#: ../setup/main.py:493
+#: ../setup/setup.ui.h:49
 msgid "_Romaji Key Table:"
-msgstr "Table des touches _Romaji :"
+msgstr "Table des touches _Romaji :"
 
-#: ../setup/main.py:494 ../setup/main.py:500
+#: ../setup/main.py:494
+#: ../setup/main.py:500
 msgid "_Output Chars"
 msgstr "Caractères de s_ortie"
 
-#: ../setup/main.py:495 ../setup/main.py:501 ../setup/main.py:901
-#: ../setup/main.py:930 ../setup/setup.ui.h:26
+#: ../setup/main.py:495
+#: ../setup/main.py:501
+#: ../setup/main.py:901
+#: ../setup/main.py:930
+#: ../setup/setup.ui.h:26
 msgid "Default"
 msgstr "Défaut"
 
@@ -246,9 +271,10 @@ msgstr "Défaut"
 msgid "Customize Kana Key Table"
 msgstr "Modifier la table des touches Kana"
 
-#: ../setup/main.py:499 ../setup/setup.ui.h:51
+#: ../setup/main.py:499
+#: ../setup/setup.ui.h:51
 msgid "_Kana Key Table:"
-msgstr "Table des touches _Kana :"
+msgstr "Table des touches _Kana :"
 
 #: ../setup/main.py:504
 msgid "Customize Thumb Shift Key Table"
@@ -256,7 +282,7 @@ msgstr "Modifier la table des touches de la méthode Thumb Shift"
 
 #: ../setup/main.py:505
 msgid "_Thumb Shift Key Table:"
-msgstr "Table des touches de la méthode _Thumb Shift :"
+msgstr "Table des touches de la méthode _Thumb Shift :"
 
 #: ../setup/main.py:506
 msgid "Single _Output Chars"
@@ -304,57 +330,47 @@ msgstr "FMV KB611-F key extension"
 
 #: ../setup/main.py:676
 msgid "Your choosed file has already been added: "
-msgstr "Le fichier que vous avez selectionné a déjà été ajouté : "
+msgstr "Le fichier que vous avez sélectionné a déjà été ajouté : "
 
 #: ../setup/main.py:680
 msgid "The file you have chosen does not exist: "
-msgstr "Le fichier que vous avez selectionné n'existe pas : "
+msgstr "Le fichier que vous avez sélectionné n'existe pas : "
 
 #: ../setup/main.py:684
 msgid "Your choosed file is a directory: "
-msgstr "Le fichier que vous avez selectionné est un dossier : "
+msgstr "Le fichier que vous avez sélectionné est un dossier : "
 
 #: ../setup/main.py:688
 msgid "You cannot add dictionaries in the anthy private directory: "
-msgstr ""
-"Vous ne pouvez pas ajouter de dictionnaire dans le dossier privé d'Anthy : "
+msgstr "Vous ne pouvez pas ajouter de dictionnaire dans le dossier privé d'Anthy : "
 
 #: ../setup/main.py:695
 msgid "Your file path is not good: "
-msgstr "Le chemin du fichier selectionné est incorrect : "
+msgstr "Le chemin du fichier sélectionné est incorrect : "
 
 #: ../setup/main.py:842
-#, fuzzy
 msgid "The engine xml file does not exist: "
-msgstr "Le fichier que vous avez selectionné n'existe pas : "
+msgstr "Le fichier xml du moteur n'existe pas : "
 
 #: ../setup/main.py:883
-msgid ""
-"Anthy keyboard layout is changed. Please restart ibus to reload the layout."
-msgstr ""
+msgid "Anthy keyboard layout is changed. Please restart ibus to reload the layout."
+msgstr "L'agencement du clavier Anthy a changé. Veuillez redémarrer ibus pour recharger l'agencement."
 
 #: ../setup/main.py:947
-#, fuzzy
 msgid "Confirmation"
 msgstr "Confirmer"
 
 #: ../setup/main.py:949
-#, fuzzy
 msgid "You are about to close the setup dialog, is that OK?"
-msgstr "Êtes-vous sûr de vouloir fermer la fenêtre de configuration ?"
+msgstr "Êtes-vous sûr de bien vouloir fermer la fenêtre de configuration ?"
 
 #: ../setup/main.py:963
 msgid "Notice!"
-msgstr "Attention !"
+msgstr "Attention !"
 
 #: ../setup/main.py:965
-#, fuzzy
-msgid ""
-"You are about to close the setup dialog without saving your changes, is that "
-"OK?"
-msgstr ""
-"Êtes-vous sûr de fermer la fenêtre de configuration sans sauver les "
-"modifications ?"
+msgid "You are about to close the setup dialog without saving your changes, is that OK?"
+msgstr "Êtes-vous sûr de vouloir fermer la fenêtre de configuration sans sauver les modifications ?"
 
 #: ../setup/main.py:1070
 msgid "Please specify Input Chars"
@@ -372,15 +388,15 @@ msgstr "Veuillez spécifier les caractères Thumb Shift Gauche"
 msgid "Please specify Right Thumb Shift Chars"
 msgstr "Veuillez spécifier les caractères Thumb Shift Droit"
 
-#: ../setup/main.py:1092 ../setup/main.py:1132
+#: ../setup/main.py:1092
+#: ../setup/main.py:1132
 msgid "Your custom key is not assigned in any sections. Maybe a bug."
-msgstr ""
-"Votre touche personnalisée n'est assignée à aucune section. Sans doute un "
-"bogue."
+msgstr "Votre touche personnalisée n'est assignée à aucune section. Sans doute un bogue."
 
-#: ../setup/main.py:1192 ../setup/main.py:1278
+#: ../setup/main.py:1192
+#: ../setup/main.py:1278
 msgid "Your file does not exist: "
-msgstr "Le fichier que vous avez selectionné n'existe pas : "
+msgstr "Le fichier que vous avez sélectionné n'existe pas : "
 
 #: ../setup/main.py:1202
 msgid "Open Dictionary File"
@@ -392,7 +408,7 @@ msgstr "Éditer le fichier de dictionnaire"
 
 #: ../setup/main.py:1222
 msgid "Your choosed file is not correct."
-msgstr "Le fichier que vous avez selectionné est incorrect."
+msgstr "Le fichier que vous avez sélectionné est incorrect."
 
 #: ../setup/main.py:1251
 msgid "You cannot delete the system dictionary."
@@ -400,7 +416,7 @@ msgstr "Vous ne pouvez pas supprimer le dictionnaire système."
 
 #: ../setup/main.py:1274
 msgid "Your file is not good."
-msgstr "Le fichier que vous avez selectionné n'est pas bon."
+msgstr "Le fichier que vous avez sélectionné n'est pas bon."
 
 #: ../setup/main.py:1304
 msgid "View Dictionary File"
@@ -414,13 +430,15 @@ msgstr "Veuillez appuyer sur une touche (ou une combinaison de touches)"
 msgid "The dialog will be closed when the key is released"
 msgstr "La fenêtre se fermera lorsque la touche sera relâchée"
 
-#: ../setup/main.py:1478 ../setup/main.py:1498
+#: ../setup/main.py:1478
+#: ../setup/main.py:1498
 msgid "Invalid keysym"
 msgstr "« keysym » invalide"
 
-#: ../setup/main.py:1479 ../setup/main.py:1499
+#: ../setup/main.py:1479
+#: ../setup/main.py:1499
 msgid "This keysym is not valid"
-msgstr "Le « keysym » est invalide"
+msgstr "Ce « keysym » n'est pas valide"
 
 #: ../setup/setup.ui.h:6
 msgid "NICOLA-J"
@@ -492,7 +510,7 @@ msgstr "Méthode d'E_ntrée :"
 
 #: ../setup/setup.ui.h:31
 msgid "_Typing Method:"
-msgstr "Méthode d'Éc_riture :"
+msgstr "Méthode de Sa_isie :"
 
 #: ../setup/setup.ui.h:32
 msgid "Conversion _Mode:"
@@ -504,23 +522,23 @@ msgstr "<b>Configuration initiale</b>"
 
 #: ../setup/setup.ui.h:34
 msgid "_Period Style:"
-msgstr "Style de _Ponctuation :"
+msgstr "Style de _Ponctuation :"
 
 #: ../setup/setup.ui.h:35
 msgid "Symbo_l Style:"
-msgstr "Style de _Symboles :"
+msgstr "Style de _Symboles :"
 
 #: ../setup/setup.ui.h:36
 msgid "Numpad _Key Type:"
-msgstr "Touches du Pa_vé Numérique :"
+msgstr "Touches du Pa_vé Numérique :"
 
 #: ../setup/setup.ui.h:37
 msgid "_Behavior on Period:"
-msgstr "Comportement _lors de la ponctuation :"
+msgstr "Comportement _lors de la ponctuation :"
 
 #: ../setup/setup.ui.h:38
 msgid "Behavior on _Focus Out:"
-msgstr "Comportement à la perte du _Focus :"
+msgstr "Comportement à la perte du _Focus :"
 
 #: ../setup/setup.ui.h:39
 msgid "<b>Behavior</b>"
@@ -532,7 +550,7 @@ msgstr "Convertir les ch_iffres en chiffres d'une seule colonne de largeur"
 
 #: ../setup/setup.ui.h:41
 msgid "Candidate _Window Page Size:"
-msgstr "_Taille de la fenêtre de la liste des candidats :"
+msgstr "_Taille de la fenêtre de la liste des candidats :"
 
 #: ../setup/setup.ui.h:42
 msgid "Convert _symbols with the one column width"
@@ -552,7 +570,7 @@ msgstr "_Général"
 
 #: ../setup/setup.ui.h:46
 msgid "_Shortcut Type:"
-msgstr "Raccourcis _claviers :"
+msgstr "Raccourcis _claviers :"
 
 #: ../setup/setup.ui.h:47
 msgid "De_fault"
@@ -572,86 +590,63 @@ msgstr "<b>Kana</b>"
 
 #: ../setup/setup.ui.h:53
 msgid "Keyboad _layout:"
-msgstr ""
+msgstr "Agencement du c_lavier :"
 
 #: ../setup/setup.ui.h:54
-#, fuzzy
 msgid "<b>Keyboard layout</b>"
-msgstr "<b>Kana</b>"
+msgstr "<b>Agencement du clavier</b>"
 
 #: ../setup/setup.ui.h:55
 msgid "_Typing Method"
-msgstr "Méthode d'Écri_ture"
+msgstr "Mé_thode de Saisie"
 
 #: ../setup/setup.ui.h:56
 msgid "_Left Thumb Shift Key:"
-msgstr "Touche Thumb Shift _Gauche"
+msgstr "Touche Thumb Shift _Gauche :"
 
 #: ../setup/setup.ui.h:57
 msgid "Right _Thumb Shift Key:"
-msgstr "Touche _Thumb Shift Droit"
+msgstr "Touche _Thumb Shift Droit :"
 
 #: ../setup/setup.ui.h:58
 msgid "Adjust _input method layout to system keyboard layout"
-msgstr ""
-"Utiliser la d_isposition clavier système comme disposition pour la méthode "
-"d'entrée"
+msgstr "Utiliser la l'agencement clavier système comme disposition pour la méthode de sa_isie"
 
 #: ../setup/setup.ui.h:59
 msgid "Adjust IM layout to XKB layout"
-msgstr "Utilise la disposition clavier utilisée dans XKB pour l'IME"
+msgstr "Utilise l'agencement clavier utilisée dans XKB pour l'IME"
 
 #: ../setup/setup.ui.h:60
 msgid "Input _Method Layout:"
-msgstr "Disposition de la _Méthode d'entrée :"
+msgstr "Disposition de la _Méthode de saisie :"
 
 #: ../setup/setup.ui.h:61
 msgid "Restart IBus when you change the keyboard layout"
-msgstr "Redémarrez IBus lorsque vous changer la disposition clavier système."
+msgstr "Redémarrez IBus lorsque vous changer l'agencement clavier système."
 
 #: ../setup/setup.ui.h:62
 msgid "Restart IBus when you change XKB"
-msgstr "Redémarrez IBus lorsque vous changer la configuration dans XKB"
+msgstr "Redémarrez IBus lorsque vous changer la configuration XKB"
 
 #: ../setup/setup.ui.h:63
-msgid ""
-"Strongly recommend to enable \"Use system keyboard layout\" check button in "
-"\"Advanced\" tab using 'ibus-setup' command"
-msgstr ""
-"Il est fortement recommandé de cocher la case pour l'option « Utiliser la "
-"disposition clavier système » dans l'onglet « Avancé » en utilisant la "
-"commande « ibus-setup »"
+msgid "Strongly recommend to enable \"Use system keyboard layout\" check button in \"Advanced\" tab using 'ibus-setup' command"
+msgstr "Il est fortement recommandé de cocher la case pour l'option « Utiliser l'agencement clavier système » dans l'onglet « Avancé » en utilisant la commande « ibus-setup »"
 
 #: ../setup/setup.ui.h:64
 msgid "_Additional Key Arrangement:"
-msgstr "_Arrangement des Touches Additionnelles :"
+msgstr "_Arrangements des Touches Additionnelles :"
 
 #: ../setup/setup.ui.h:65
-msgid ""
-"'&#xFF5E;', '&#x300E;', '&#xA2;', '&#xA3;' and so on can be output with "
-"Thumb Shift key"
-msgstr ""
-"'&#xFF5E;', '&#x300E;', '&#xA2;', '&#xA3;', etc. peuvent être tapées avec la "
-"méthode Thumb Shift"
+msgid "'&#xFF5E;', '&#x300E;', '&#xA2;', '&#xA3;' and so on can be output with Thumb Shift key"
+msgstr "'&#xFF5E;', '&#x300E;', '&#xA2;', '&#xA3;', etc. peuvent être tapés avec la méthode Thumb Shift"
 
 #: ../setup/setup.ui.h:66
-msgid ""
-"You do not have to reconfigure the system keyboard layout for \"Additional "
-"Key Arrangement\" since this option changes input method layout only in case "
-"input method is turned on."
-msgstr ""
-"Vous n'avez pas besoin de reconfigurer la disposition clavier système pour "
-"profiter des « Arrangement des Touches Additionnelles », puisque cette "
-"option ne change la disposition de la méthode d'entrée que lorsque la "
-"méthode d'entrée est activée."
+msgid "You do not have to reconfigure the system keyboard layout for \"Additional Key Arrangement\" since this option changes input method layout only in case input method is turned on."
+msgstr "Vous n'avez pas besoin de reconfigurer l'agencement clavier système pour profiter des « Arrangements des Touches Additionnelles », puisque cette option ne change l'agencement de la méthode de saisie que lorsque la méthode de saisie est activée."
 
 #: ../setup/setup.ui.h:67
-msgid ""
-"You do not have to reconfigure XKB since this option changes IM layout only "
-"with IM on."
-msgstr ""
-"Vous n'avez pas besoin de reconfigurer XKB, puisque cette option ne change "
-"que la disposition de l'IME lorsque l'IME est activé."
+msgid "You do not have to reconfigure XKB since this option changes IM layout only with IM on."
+msgstr "Vous n'avez pas besoin de reconfigurer XKB, puisque cette option ne change que l'agencement de l'IME lorsque l'IME est activé."
 
 #: ../setup/setup.ui.h:68
 msgid "_Enable semi-voiced sound mark with Shift key"
@@ -755,8 +750,7 @@ msgstr "_Description :"
 
 #: ../setup/setup.ui.h:93
 msgid "_Use your dictionary alone with switching dictionaries"
-msgstr ""
-"_Utiliser votre dictionnaire seul lors du basculement des dictionnaires"
+msgstr "_Utiliser votre dictionnaire tout seul lors du basculement des dictionnaires"
 
 #: ../setup/setup.ui.h:94
 msgid "_Embed your dictionary in the system dictionary"

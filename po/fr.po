@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: IBus-Anthy\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/ibus/issues/entry\n"
 "POT-Creation-Date: 2014-02-18 17:18+0900\n"
-"PO-Revision-Date: 2014-02-18 08:42+0000\n"
+"PO-Revision-Date: 2014-02-20 10:01+0100\n"
 "Last-Translator: Julien Humbert <julroy67@gmail.com>\n"
 "Language-Team: French <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,12 +18,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.6.3\n"
+"X-Generator: Poedit 1.6.4\n"
 
 #: ../engine/python2/engine.py:193 ../engine/python3/engine.py:194
 msgid ""
 "Could not enable Anthy.\n"
-"The end of the content of the file .anthy/last-record2_default.utf8 in your home directory is not '\\n'. I.e. not correct text format.\n"
+"The end of the content of the file .anthy/last-record2_default.utf8 in your "
+"home directory is not '\\n'. I.e. not correct text format.\n"
 "Please fix the file or remove it by manual and restart IBus."
 msgstr ""
 "Anthy n'a pas pu être activé.\n"
@@ -384,7 +385,8 @@ msgstr "Le fichier que vous avez sélectionné est un dossier : "
 
 #: ../setup/python2/main.py:773 ../setup/python3/main.py:778
 msgid "You cannot add dictionaries in the anthy private directory: "
-msgstr "Vous ne pouvez pas ajouter de dictionnaire dans le dossier privé d’Anthy : "
+msgstr ""
+"Vous ne pouvez pas ajouter de dictionnaire dans le dossier privé d’Anthy : "
 
 #: ../setup/python2/main.py:780 ../setup/python3/main.py:785
 msgid "Your file path is not good: "
@@ -397,7 +399,9 @@ msgstr "Le fichier xml du moteur n’existe pas : "
 #: ../setup/python2/main.py:1075 ../setup/python3/main.py:1069
 msgid ""
 "Anthy keyboard layout is changed. Please restart ibus to reload the layout."
-msgstr "La disposition clavier Anthy a changée. Veuillez redémarrer ibus pour charger la nouvelle disposition."
+msgstr ""
+"La disposition clavier Anthy a changée. Veuillez redémarrer ibus pour "
+"charger la nouvelle disposition."
 
 #: ../setup/python2/main.py:1137 ../setup/python3/main.py:1131
 msgid "Confirmation"
@@ -413,9 +417,11 @@ msgstr "Attention !"
 
 #: ../setup/python2/main.py:1155 ../setup/python3/main.py:1149
 msgid ""
-"You are about to close the setup dialog without saving your changes, is that"
-" OK?"
-msgstr "Êtes-vous sûr de vouloir fermer la fenêtre de configuration sans sauver les modifications ?"
+"You are about to close the setup dialog without saving your changes, is that "
+"OK?"
+msgstr ""
+"Êtes-vous sûr de vouloir fermer la fenêtre de configuration sans sauver les "
+"modifications ?"
 
 #: ../setup/python2/main.py:1275 ../setup/python3/main.py:1269
 msgid "Please specify Input Chars"
@@ -436,7 +442,9 @@ msgstr "Veuillez spécifier les caractères Thumb Shift Droit"
 #: ../setup/python2/main.py:1297 ../setup/python2/main.py:1341
 #: ../setup/python3/main.py:1291 ../setup/python3/main.py:1335
 msgid "Your custom key is not assigned in any sections. Maybe a bug."
-msgstr "Votre touche personnalisée n’est assignée à aucune section. Cela est sans doute un bogue."
+msgstr ""
+"Votre touche personnalisée n’est assignée à aucune section. Cela est sans "
+"doute un bogue."
 
 #: ../setup/python2/main.py:1406 ../setup/python2/main.py:1492
 #: ../setup/python3/main.py:1400 ../setup/python3/main.py:1486
@@ -629,7 +637,9 @@ msgstr "Convertir les _espaces en espaces d’une seule colonne de largeur"
 msgid ""
 "Swi_tch “Hiragana” and “Latin” with Shift key and Hiragana–Katakana key in "
 "preedit"
-msgstr "Permuter entre les modes « Hiragana » et « Latin » avec la touche Maj et la touche Hiragana-Katakana en pré-édition"
+msgstr ""
+"Permuter entre les modes « Hiragana » et « Latin » avec la touche Maj et la "
+"touche Hiragana-Katakana en pré-édition"
 
 #: ../setup/python2/setup.ui.h:47 ../setup/python3/setup.ui.h:47
 msgid "<b>Other</b>"
@@ -711,20 +721,28 @@ msgstr "_Arrangements des Touches Additionnelles :"
 msgid ""
 "'&#xFF5E;', '&#x300E;', '&#xA2;', '&#xA3;' and so on can be output with "
 "Thumb Shift key"
-msgstr "'&#xFF5E;', '&#x300E;', '&#xA2;', '&#xA3;', etc. peuvent être tapés avec la méthode Thumb Shift"
+msgstr ""
+"'&#xFF5E;', '&#x300E;', '&#xA2;', '&#xA3;', etc. peuvent être tapés avec la "
+"méthode Thumb Shift"
 
 #: ../setup/python2/setup.ui.h:69 ../setup/python3/setup.ui.h:69
 msgid ""
 "You do not have to reconfigure the system keyboard layout for \"Additional "
-"Key Arrangement\" since this option changes input method layout only in case"
-" input method is turned on."
-msgstr "Vous n’avez pas besoin de reconfigurer la disposition clavier système pour profiter des « Arrangements des Touches Additionnelles », puisque cette option ne change la disposition de la méthode de saisie que lorsque la méthode de saisie est activée."
+"Key Arrangement\" since this option changes input method layout only in case "
+"input method is turned on."
+msgstr ""
+"Vous n’avez pas besoin de reconfigurer la disposition clavier système pour "
+"profiter des « Arrangements des Touches Additionnelles », puisque cette "
+"option ne change la disposition de la méthode de saisie que lorsque la "
+"méthode de saisie est activée."
 
 #: ../setup/python2/setup.ui.h:70 ../setup/python3/setup.ui.h:70
 msgid ""
 "You do not have to reconfigure XKB since this option changes IM layout only "
 "with IM on."
-msgstr "Vous n’avez pas besoin de reconfigurer XKB, puisque cette option ne change que la disposition de l’IME lorsque l’IME est activé."
+msgstr ""
+"Vous n’avez pas besoin de reconfigurer XKB, puisque cette option ne change "
+"que la disposition de l’IME lorsque l’IME est activé."
 
 #: ../setup/python2/setup.ui.h:71 ../setup/python3/setup.ui.h:71
 msgid "_Enable semi-voiced sound mark with Shift key"
@@ -860,7 +878,8 @@ msgstr "_Description :"
 
 #: ../setup/python2/setup.ui.h:106 ../setup/python3/setup.ui.h:106
 msgid "_Use your dictionary alone with switching dictionaries"
-msgstr "_Utiliser votre dictionnaire tout seul lors du basculement des dictionnaires"
+msgstr ""
+"_Utiliser votre dictionnaire tout seul lors du basculement des dictionnaires"
 
 #: ../setup/python2/setup.ui.h:107 ../setup/python3/setup.ui.h:107
 msgid "_Embed your dictionary in the system dictionary"

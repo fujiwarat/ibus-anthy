@@ -1104,7 +1104,8 @@ class Engine(IBus.EngineSimple):
         # It seems do_destroy() is called when launch_engine() is called.
         #self.__remove_dict_files()
         # It seems super.destroy() does not unref the engine.
-        self.__input_mode_icon.clear()
+        if self.__input_mode_icon != None:
+            self.__input_mode_icon.clear()
         self.__input_mode_icon = None
 
     def __join_all_segments(self):

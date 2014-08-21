@@ -159,7 +159,8 @@ class AnthySetup(object):
                      'half_width_symbol', 'half_width_number', 'half_width_space',
                      'latin_with_shift',
                      'thumb:keyboard_layout_mode', 'thumb:keyboard_layout',
-                     'thumb:fmv_extension', 'thumb:handakuten']:
+                     'thumb:fmv_extension', 'thumb:handakuten',
+                     'show_input_mode_icon']:
             section, key = self.__get_section_key(name)
             builder.get_object(name).set_active(prefs.get_value(section, key))
 
@@ -337,6 +338,9 @@ class AnthySetup(object):
         else:
             section = 'common'
             key = name
+        if section == 'common':
+            if name == 'show_input_mode_icon':
+                key = 'show-input-mode-icon'
         return (section, key)
 
     def __run_message_dialog(self, message, type=Gtk.MessageType.INFO):

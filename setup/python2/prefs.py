@@ -4,8 +4,8 @@
 #
 # Copyright (c) 2007-2008 Peng Huang <shawn.p.huang@gmail.com>
 # Copyright (c) 2009 Hideaki ABE <abe.sendai@gmail.com>
-# Copyright (c) 2010-2013 Takao Fujiwara <takao.fujiwara1@gmail.com>
-# Copyright (c) 2007-2013 Red Hat, Inc.
+# Copyright (c) 2010-2014 Takao Fujiwara <takao.fujiwara1@gmail.com>
+# Copyright (c) 2007-2014 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -145,15 +145,27 @@ class Prefs(object):
         variant = self._config.get_values(s)
         for key in variant.keys():
             v = variant[key]
+            # FIXME: ibus-dconf converts the keys.
+            #if key.find('_') >= 0:
+            #    key = key.replace('_', '-')
+            if section == 'common':
+                if key == 'show_input_mode':
+                    key = 'show-input-mode'
+                elif key == 'show_typing_method':
+                    key = 'show-typing-method'
+                elif key == 'show_segment_mode':
+                    key = 'show-segment-mode'
+                elif key == 'show_dict_mode':
+                    key = 'show-dict-mode'
+                elif key == 'show_dict_config':
+                    key = 'show-dict-config'
+                elif key == 'show_preferences':
+                    key = 'show-preferences'
+                elif key == 'show_input_mode_icon':
+                    key = 'show-input-mode-icon'
+                elif key == 'icon_str_rgba':
+                    key = 'icon-str-rgba'
             self.modified.setdefault(section, {})[key] = v if v != [''] else []
-        # FIXME: ibus-dconf converts the keys.
-        if section == 'common':
-            self.fetch_item(section, 'show-input-mode')
-            self.fetch_item(section, 'show-typing-method')
-            self.fetch_item(section, 'show-segment-mode')
-            self.fetch_item(section, 'show-dict-mode')
-            self.fetch_item(section, 'show-dict-config')
-            self.fetch_item(section, 'show-preferences')
 
     def fetch_item(self, section, key, readonly=False):
         if self._config == None:

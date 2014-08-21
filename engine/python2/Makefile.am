@@ -3,8 +3,8 @@
 # ibus-anthy - The Anthy engine for IBus
 #
 # Copyright (c) 2007-2008 Peng Huang <shawn.p.huang@gmail.com>
-# Copyright (c) 2010-2013 Takao Fujiwara <takao.fujiwara1@gmail.com>
-# Copyright (c) 2007-2013 Red Hat, Inc.
+# Copyright (c) 2010-2014 Takao Fujiwara <takao.fujiwara1@gmail.com>
+# Copyright (c) 2007-2014 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ engine_anthy_PYTHON = \
 	jastring.py \
 	kana.py \
 	main.py \
+	propertyicon.py \
 	romaji.py \
 	segment.py \
 	tables.py \

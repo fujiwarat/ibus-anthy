@@ -4,8 +4,8 @@
 # ibus-anthy - The Anthy engine for IBus
 #
 # Copyright (c) 2007-2008 Peng Huang <shawn.p.huang@gmail.com>
-# Copyright (c) 2010-2013 Takao Fujiwara <takao.fujiwara1@gmail.com>
-# Copyright (c) 2007-2013 Red Hat, Inc.
+# Copyright (c) 2010-2014 Takao Fujiwara <takao.fujiwara1@gmail.com>
+# Copyright (c) 2007-2014 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ try:
 except:
     pass
 
+from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import IBus
 
@@ -117,6 +118,7 @@ class Engine(IBus.EngineSimple):
     __keybind = {}
     __thumb = None
     __latin_with_shift = True
+    __input_mode_icon = None
 
     def __init__(self, bus, object_path):
         super(Engine, self).__init__(engine_name="anthy",
@@ -169,6 +171,8 @@ class Engine(IBus.EngineSimple):
         if ibus_config != None:
             ibus_config.connect('value-changed',
                                 self.__config_value_changed_cb)
+
+        self.__run_input_mode_icon()
 
     def __get_ibus_version(self):
         if self.__ibus_version == 0.0:
@@ -257,6 +261,73 @@ class Engine(IBus.EngineSimple):
         self.__remove_dict_files()
         signal.signal(signum, signal.SIG_DFL)
         os.kill(os.getpid(), signum)
+
+    def __is_gnome_shell_running(self):
+        connection = None
+        variant = None
+
+        try:
+            connection = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+            variant = connection.call_sync('org.gnome.Shell',
+                                           '/org/gnome/Shell',
+                                           'org.freedesktop.DBus.Peer',
+                                           'Ping',
+                                           None,
+                                           None,
+                                           Gio.DBusCallFlags.NONE,
+                                           -1,
+                                           None)
+        except GLib.GError as e:
+            pass
+    
+        if connection != None:
+            try:
+                connection.flush_sync(None)
+            except GLib.GError as e:
+                printerr('GDBusConnection flush failed: ' + str(e))
+
+        if variant == None:
+            return False
+        return True
+
+    def __run_input_mode_icon(self):
+        self.__input_mode_icon = None
+
+        if self.__is_gnome_shell_running():
+            return
+        try:
+            from gi.repository import Gdk
+            if Gdk.Display.get_default() == None:
+                return
+        except Exception as e:
+            printerr('import Gdk failed: ' + str(e))
+            return
+
+        if not self.__prefs.get_value('common', 'show-input-mode-icon'):
+            return
+
+        rgba = Gdk.RGBA(red = 0.0, green = 0.0, blue = 0.0, alpha = 1.0)
+        spec = self.__prefs.get_value('common', 'icon-str-rgba')
+        if not rgba.parse(spec):
+            printerr('invalid icon-str-rgba: %s' % spec)
+            rgba = Gdk.RGBA(red = 0.0, green = 0.0, blue = 0.0, alpha = 1.0)
+
+        modes = {
+            INPUT_MODE_HIRAGANA : 'あ',
+            INPUT_MODE_KATAKANA : 'ア',
+            INPUT_MODE_HALF_WIDTH_KATAKANA : '_ｱ',
+            INPUT_MODE_LATIN : '_A',
+            INPUT_MODE_WIDE_LATIN : 'Ａ',
+        }
+
+        try:
+            import propertyicon
+            self.__input_mode_icon = propertyicon.PropertyIcon(rgba)
+            self.__input_mode_icon.set_visible(True)
+            self.__input_mode_icon.set_from_symbol(modes[self.__input_mode])
+        except Exception as e:
+            printerr('import PropertyIcon failed: ' + str(e))
+            return
 
     def __set_input_mode_props(self, anthy_props):
         # The class method is kept even if the engine is switched.
@@ -847,6 +918,9 @@ class Engine(IBus.EngineSimple):
         prop.set_label(IBus.Text.new_from_string(label))
         self.update_property(prop)
 
+        if self.__input_mode_icon != None:
+            self.__input_mode_icon.set_from_symbol(symbol)
+
         self.__reset()
         self.__invalidate()
 
@@ -1030,6 +1104,7 @@ class Engine(IBus.EngineSimple):
         # It seems do_destroy() is called when launch_engine() is called.
         #self.__remove_dict_files()
         # It seems super.destroy() does not unref the engine.
+        self.__input_mode_icon = None
 
     def __join_all_segments(self):
         while True:
@@ -1109,7 +1184,7 @@ class Engine(IBus.EngineSimple):
 
             # fill lookup_table
             self.__lookup_table.clear()
-            for i in xrange(0, seg_stat.nr_predictions):
+            for i in xrange(0, nr_predictions):
                 buf = self.__context.get_prediction(i)
                 candidate = UN(buf)
                 self.__lookup_table.append_candidate(IBus.Text.new_from_string(candidate))
@@ -1220,6 +1295,12 @@ class Engine(IBus.EngineSimple):
     def __update_anthy_convert_chars(self):
         self.__convert_chars = u''
         pos = 0
+
+        (seg_index, text) = self.__segments[self.__cursor_pos]
+        # prediction lookup window + BackSpace will return None
+        if text == None:
+            return
+
         for i, (seg_index, text) in enumerate(self.__segments):
             self.__convert_chars += text
             if i < self.__cursor_pos:
@@ -2110,6 +2191,13 @@ class Engine(IBus.EngineSimple):
                 self.__fetch_dict_values(base_sec)
             self.__prefs.set_value(base_sec, name, value)
             self.__set_dict_mode_props(self.__prop_list, True)
+        elif base_sec == 'common':
+            if name == 'show_input_mode_icon':
+                name = 'show-input-mode-icon'
+                self.__prefs.set_value(base_sec, name, value)
+                self.__run_input_mode_icon()
+            else:
+                self.__prefs.set_value(base_sec, name, value)
         elif base_sec:
             self.__prefs.set_value(base_sec, name, value)
         else:

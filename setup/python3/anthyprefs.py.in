@@ -355,6 +355,8 @@ _config = {
         'show-dict-mode': True,
         'show-dict-config': False,
         'show-preferences': True,
+        'show-input-mode-icon': True,
+        'icon-str-rgba': '#41507a',
 
         'period_style': 0,
         'symbol_style': 1,

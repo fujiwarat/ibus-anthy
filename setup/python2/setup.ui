@@ -346,6 +346,23 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkCheckButton" id="show_input_mode_icon">
+                    <property name="label" translatable="yes">_Show input mode icon</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="use_underline">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal handler="on_ck_toggled" name="toggled"/>
+                    <accelerator key="S" modifiers="GDK_MOD1_MASK" signal="grab_focus"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkFrame" id="frame12">
                     <property name="visible">True</property>
                     <property name="label_xalign">0</property>
@@ -396,7 +413,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>

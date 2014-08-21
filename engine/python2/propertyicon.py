@@ -76,6 +76,12 @@ class PropertyIcon(Gtk.StatusIcon):
         self.__xkb_icon_pixbufs[symbol] = pixbuf
         return pixbuf
 
+    def clear(self):
+        self.set_from_icon_name('')
+        self.set_visible(False)
+        self.__xkb_icon_pixbufs = {}
+        self.__xkb_icon_rgba = None
+
     def set_from_symbol(self, symbol):
         pixbuf = self.__create_icon_pixbuf_with_string(symbol)
         self.set_from_pixbuf(pixbuf)

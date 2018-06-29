@@ -2710,8 +2710,8 @@
     <property name="program-name">IBus-Anthy</property>
     <property name="copyright">Copyright © 2007–2008 Peng Huang
 Copyright © 2009 Hideaki ABE
-Copyright © 2009–2017 Takao Fujiwara
-Copyright © 2007–2017 Red Hat, Inc.</property>
+Copyright © 2009–2018 Takao Fujiwara
+Copyright © 2007–2018 Red Hat, Inc.</property>
     <property name="comments" translatable="yes">The Anthy engine for the IBus input platform</property>
     <property name="license">GPL</property>
     <property name="website">https://github.com/ibus/ibus/wiki</property>

@@ -865,9 +865,6 @@ class Engine(IBus.EngineSimple):
                                               IBus.PropState.CHECKED)
 
     def __input_mode_activate(self, prop_name, state):
-        if u'InputMode' not in self.__prop_dict.keys():
-            # Disable to show input mode with ibus-set-anthy
-            return
         input_modes = {
             u'InputMode.Hiragana' : (INPUT_MODE_HIRAGANA, 'あ'),
             u'InputMode.Katakana' : (INPUT_MODE_KATAKANA, 'ア'),
@@ -879,10 +876,14 @@ class Engine(IBus.EngineSimple):
         if prop_name not in input_modes:
             printerr('Unknown prop_name = %s' % prop_name)
             return
+        mode, symbol = input_modes[prop_name]
+        if u'InputMode' not in self.__prop_dict.keys():
+            # Disable to show input mode with ibus-set-anthy
+            Engine.__input_mode = mode
+            return
+
         self.__prop_dict[prop_name].set_state(state)
         self.update_property(self.__prop_dict[prop_name])
-
-        mode, symbol = input_modes[prop_name]
 
         label = _("%(description)s (%(symbol)s)") % \
             { 'description' : _("Input mode"), 'symbol' : symbol }

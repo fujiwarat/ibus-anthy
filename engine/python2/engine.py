@@ -1072,6 +1072,9 @@ class Engine(IBus.EngineSimple):
         self.__invalidate()
 
     def do_reset(self):
+        mode = self.__prefs.get_value('common', 'behavior-on-focus-out')
+        if mode == 2:
+            return
         self.__reset()
         self.__invalidate()
 

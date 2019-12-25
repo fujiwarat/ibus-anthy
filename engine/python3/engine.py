@@ -126,6 +126,7 @@ class Engine(IBus.EngineSimple):
     __keybind = {}
     __thumb = None
     __latin_with_shift = True
+    __use_global_engine = True
 
     def __init__(self, bus, object_path):
         super(Engine, self).__init__(engine_name="anthy",
@@ -145,6 +146,7 @@ class Engine(IBus.EngineSimple):
         self.__prop_dict = {}
         self.__input_purpose = 0
         self.__has_input_purpose = False
+        self.__input_mode_by_context = {}
         if hasattr(IBus, 'InputPurpose'):
             self.__has_input_purpose = True
         try:
@@ -282,6 +284,10 @@ class Engine(IBus.EngineSimple):
             Engine.__input_mode = INPUT_MODE_HIRAGANA
             Engine.__input_mode = self.__prefs.get_value('common',
                                                          'input-mode')
+            self.__input_mode_by_context['default'] = Engine.__input_mode
+            Engine.__use_global_engine = self.__prefs.get_value(
+                    'core:general',
+                    'use-global-engine')
 
         if not self.__prefs.get_value('common', 'show-input-mode'):
             return
@@ -1042,7 +1048,15 @@ class Engine(IBus.EngineSimple):
     def __rgb(self, r, g, b):
         return self.__argb(255, r, g, b)
 
-    def do_focus_in(self):
+    def do_focus_in_with_path(self, object_path):
+        object_path = path.basename(object_path)
+        if not self.__use_global_engine:
+            if object_path in self.__input_mode_by_context:
+                mode = self.__input_mode_by_context[object_path]
+                Engine.__input_mode = mode
+            else:
+                Engine.__input_mode = self.__input_mode_by_context['default']
+                self.__input_mode_by_context[object_path] = Engine.__input_mode
         self.register_properties(self.__prop_list)
         self.__refresh_typing_mode_property()
         mode = self.__prefs.get_value('common', 'behavior-on-focus-out')
@@ -1054,7 +1068,10 @@ class Engine(IBus.EngineSimple):
         if size != self.__lookup_table.get_page_size():
             self.__lookup_table.set_page_size(size)
 
-    def do_focus_out(self):
+    def do_focus_out_with_path(self, object_path):
+        object_path = path.basename(object_path)
+        if not self.__use_global_engine:
+            self.__input_mode_by_context[object_path] = Engine.__input_mode
         if self.__has_input_purpose:
             self.__input_purpose = 0
         mode = self.__prefs.get_value('common', 'behavior-on-focus-out')
@@ -1674,6 +1691,12 @@ class Engine(IBus.EngineSimple):
     def CONFIG_VALUE_CHANGED(cls, prefs, section, key, variant):
         if config.DEBUG:
             print('VALUE_CHAMGED =', section, key, variant)
+        is_core = section.startswith('core:')
+        if is_core:
+            if section == 'core:general':
+                if key == 'use-global-engine':
+                    Engine.__use_global_engine = prefs.get_value(section, key)
+            return
         if section == 'shortcut':
             cls.__keybind = cls._mk_keybind()
         elif section == 'common':

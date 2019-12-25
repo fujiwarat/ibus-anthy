@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2007-2008 Peng Huang <shawn.p.huang@gmail.com>
 # Copyright (c) 2009 Hideaki ABE <abe.sendai@gmail.com>
-# Copyright (c) 2010-2017 Takao Fujiwara <takao.fujiwara1@gmail.com>
+# Copyright (c) 2010-2019 Takao Fujiwara <takao.fujiwara1@gmail.com>
 # Copyright (c) 2007-2017 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -109,15 +109,36 @@ class Prefs(GObject.GObject):
                     schema=self.__schema_prefix + section)
             self.__settings[section].connect('changed',
                                              self.__settings_on_changed)
+        self.__core_cache = {}
+        self.__core_settings = {}
+        self.__core_schema_prefix = 'org.freedesktop.ibus.'
+        self.__core_schema_sections = ['general']
+        for section in self.__core_schema_sections:
+            self.__core_settings[section] = Gio.Settings(
+                    schema=self.__core_schema_prefix + section)
+            self.__core_settings[section].connect('changed',
+                                             self.__settings_on_changed)
 
     def __settings_on_changed(self, settings, key):
-        section = settings.props.schema[len(self.__schema_prefix):]
-        variant_value = self.__settings[section].get_value(key)
-        variant_key = self.__cache.get(section)
+        schema = settings.props.schema
+        is_anthy = False
+        if schema.startswith(self.__schema_prefix):
+            section = settings.props.schema[len(self.__schema_prefix):]
+            variant_value = self.__settings[section].get_value(key)
+            variant_key = self.__cache.get(section)
+            is_anthy = True
+        else:
+            section = settings.props.schema[len(self.__core_schema_prefix):]
+            variant_value = self.__core_settings[section].get_value(key)
+            variant_key = self.__core_cache.get(section)
         if variant_key == None:
             variant_key = {}
         variant_key[key] = variant_value
-        self.__cache[section] = variant_key
+        if is_anthy:
+            self.__cache[section] = variant_key
+        else:
+            self.__core_cache[section] = variant_key
+            section = 'core:' + section
         self.emit('changed', section, key, variant_value)
 
     def variant_to_value(self, variant):
@@ -158,16 +179,27 @@ class Prefs(GObject.GObject):
         return variant
 
     def get_variant(self, section, key):
-        variant_key = self.__cache.get(section)
+        is_core = section.startswith('core:')
+        if is_core:
+            section = section[len('core:'):]
+            variant_key = self.__core_cache.get(section)
+        else:
+            variant_key = self.__cache.get(section)
         if variant_key != None:
             variant_value = variant_key.get(key)
             if variant_value != None:
                 return variant_value
-        variant_value = self.__settings[section].get_value(key)
+        if is_core:
+            variant_value = self.__core_settings[section].get_value(key)
+        else:
+            variant_value = self.__settings[section].get_value(key)
         if variant_key == None:
             variant_key = {}
         variant_key[key] = variant_value
-        self.__cache[section] = variant_key
+        if is_core:
+            self.__core_cache[section] = variant_key
+        else:
+            self.__cache[section] = variant_key
         return variant_value
 
     def get_default_variant(self, section, key):

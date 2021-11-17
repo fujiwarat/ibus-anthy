@@ -40,6 +40,8 @@ jobs:
     - sudo apt-get -qq update
     script:
     - set -e
+    - env GIT_PAGER=cat git config -l
+    - env GIT_PAGER=cat git log HEAD...HEAD~10
     - git pull --depth=200
     # configure options from
     # https://salsa.debian.org/debian/ibus-anthy/-/blob/master/debian/rules

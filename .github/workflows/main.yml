@@ -41,7 +41,6 @@ jobs:
          # https://packages.ubuntu.com/search?searchon=sourcenames&keywords=ibus-anthy
          UBUNTU_PACKAGES_MAKE: >
            desktop-file-utils
-           gobject-introspection
            libanthy-dev
            libdconf-dev
            libgirepository1.0-dev
@@ -59,6 +58,7 @@ jobs:
            gettext-devel
            git
            gtk3-devel
+           gobject-introspection-devel
            ibus-devel
            libtool
            python3-devel
@@ -151,4 +151,8 @@ jobs:
           VERBOSE=1
           DESTDIR="$HOME/build/$USER/dest"
 
+      - name: Desktop file validation
+        run: >
+          desktop-file-validate
+          ./setup/python3/ibus-setup-anthy.desktop
 

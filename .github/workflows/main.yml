@@ -25,8 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: ["ubuntu:jammy"]
-        #container: ["fedora:38", "fedora:39", "ubuntu:jammy"]
+        container: ["fedora:38", "fedora:39", "ubuntu:jammy"]
 
     container:
       image: ${{ matrix.container }}
@@ -150,7 +149,7 @@ jobs:
         # be too long and failed to set DESTDIR to install
         # bindings/pygobject/IBus.py
         run: >
-          make
+          make -j$(nproc) distcheck
           VERBOSE=1
           DESTDIR="$HOME/build/$USER/dest"
 

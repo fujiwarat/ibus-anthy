@@ -42,6 +42,7 @@ jobs:
          # https://packages.ubuntu.com/search?searchon=sourcenames&keywords=ibus-anthy
          UBUNTU_PACKAGES_MAKE: >
            desktop-file-utils
+           gettext
            gir1.2-ibus-1.0
            libanthy-dev
            libdconf-dev

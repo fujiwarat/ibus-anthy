@@ -48,6 +48,7 @@ jobs:
            libglib2.0-dev
            libgtk-3-bin
            libgtk-3-dev
+           libibus-1.0-dev
            libtool
            python-gi-dev
            python3-all
@@ -58,6 +59,7 @@ jobs:
            gettext-devel
            git
            gtk3-devel
+           ibus-devel
            libtool
            python3-devel
            python3-gobject

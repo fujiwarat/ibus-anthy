@@ -54,8 +54,9 @@ jobs:
            python3-all
          FEDORA_PACKAGES_MAKE: >
            anthy-unicode-devel
-           dconf-devel
            desktop-file-utils
+           debhelper-compat
+           dconf-devel
            gettext-devel
            git
            gtk3-devel

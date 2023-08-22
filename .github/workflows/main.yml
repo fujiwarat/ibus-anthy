@@ -1,0 +1,150 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        container: ["fedora:38", "fedora:39", "ubuntu:jammy"]
+    steps:
+      - name: Check container sha tags
+        run: |
+          docker pull "${{ matrix.container }}"
+          docker inspect "${{ matrix.container }}" --format=${{ '{{.RepoDigests}}{{.Created}}' }}
+
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    container:
+      image: ${{ matrix.container }}
+
+    steps:
+      - name: Install distro packages
+        env:
+         # For autogen.sh
+         UBUNTU_PACKAGES_AUTOGEN: >
+           autopoint
+           strace
+         # For make from
+         # https://packages.ubuntu.com/search?searchon=sourcenames&keywords=ibus-anthy
+         UBUNTU_PACKAGES_MAKE: >
+           desktop-file-utils
+           gobject-introspection
+           libanthy-dev
+           libdconf-dev
+           libgirepository1.0-dev
+           libglib2.0-dev
+           libgtk-3-bin
+           libgtk-3-dev
+           libtool
+           python-gi-dev
+           python3-all
+         FEDORA_PACKAGES_MAKE: >
+           anthy-unicode-devel
+           dconf-devel
+           desktop-file-utils
+           gettext-devel
+           git
+           gtk3-devel
+           libtool
+           python3-devel
+           python3-gobject
+         # for ibus-keypress
+         FEDORA_PACKAGES_CI_KEY: >
+           gnome-shell
+           gnome-shell-extension-no-overview
+           libXtst-devel
+         FEDORA_PACKAGES_DISTRO: >
+           patch
+           strace
+
+        run: |
+          case "${{ matrix.container }}" in
+          ubuntu*)
+            cat /etc/lsb-release
+            echo "apt-get update -qq -y"
+            apt-get update -qq -y
+            echo "apt-get install -q -y git"
+            apt-get install -q -y git
+            PACKAGES=$(echo "$UBUNTU_PACKAGES_AUTOGEN" | tr -d '\n')
+            PACKAGES=$(echo "$PACKAGES $UBUNTU_PACKAGES_MAKE" | tr -d '\n')
+            echo "apt-get install -y $PACKAGES"
+            apt-get install -y $PACKAGES
+            dpkg -l | grep anthy
+            ;;
+          fedora*)
+            cat /etc/fedora-release
+            DNF=dnf5
+            if test "${{ matrix.container }}" = "fedora:38" ; then
+                DNF=dnf
+            fi
+            echo "$DNF -y update"
+            $DNF -y update
+            echo "$DNF -y install git which"
+            $DNF -y install git which
+            PACKAGES=$(echo "$FEDORA_PACKAGES_MAKE" | tr -d '\n')
+            PACKAGES=$(echo "$PACKAGES $FEDORA_PACKAGES_CI_KEY" | tr -d '\n')
+            PACKAGES=$(echo "$PACKAGES $FEDORA_PACKAGES_DISTRO" | tr -d '\n')
+            echo "$DNF -y install $PACKAGES"
+            $DNF -y install $PACKAGES
+            ;;
+          *)
+            echo "Not supported ${{ matrix.container }}"
+            ls /etc/*release
+            cat /etc/*release
+            exit 1
+            ;;
+          esac
+          pwd
+          echo $GITHUB_WORKSPACE
+          ls -a
+
+      - uses: actions/checkout@v2
+        with:
+          #repository: ibus/ibus-anthy
+          fetch-depth: 200
+
+      - name: Fetch git tags
+        run: |
+          pwd
+          id
+          ls -al
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git branch
+          git fetch --prune --unshallow --tags
+          echo $PATH
+
+      - name: Run autogen
+        # configure options from
+        # https://salsa.debian.org/debian/ibus/-/blob/master/debian/rules
+        run: >
+          ./autogen.sh
+          --libexecdir=/usr/lib/ibus
+          --with-layout='default'
+          --with-python=python3
+          --with-hotkeys
+          --with-on-off-keys="'Zenkaku_Hankaku', 'Ctrl+space', 'Ctrl+J'"
+          --enable-installed-tests
+          --disable-static
+
+      - name: Run make
+        # Set the cutom DESTDIR because the default DESTDIR
+        # /home/travis/bulid/fujiwarat/$PKG/ibus/ibus-$VERSION/_inst seems to
+        # be too long and failed to set DESTDIR to install
+        # bindings/pygobject/IBus.py
+        run: >
+          make
+          VERBOSE=1
+          DESTDIR="$HOME/build/$USER/dest"
+
+

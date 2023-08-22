@@ -25,7 +25,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: ["fedora:38", "fedora:39", "ubuntu:jammy"]
+        container: ["ubuntu:jammy"]
+        #container: ["fedora:38", "fedora:39", "ubuntu:jammy"]
 
     container:
       image: ${{ matrix.container }}

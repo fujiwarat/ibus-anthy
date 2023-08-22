@@ -56,9 +56,6 @@ AC_PROG_CXX
 AC_HEADER_STDC
 LT_INIT
 
-# Check if cross compiling.
-AM_CONDITIONAL(CROSS_COMPILING, test "x$cross_compiling" = xyes)
-
 dnl - For dislpay Date
 m4_define(ibus_datedisplay,
     m4_esyscmd(date '+%a %b %d %Y' | tr -d '\n\r'))

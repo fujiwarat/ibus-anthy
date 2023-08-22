@@ -55,7 +55,6 @@ jobs:
          FEDORA_PACKAGES_MAKE: >
            anthy-unicode-devel
            desktop-file-utils
-           debhelper-compat
            dconf-devel
            gettext-devel
            git

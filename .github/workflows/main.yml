@@ -52,6 +52,8 @@ jobs:
            libtool
            pkg-config
            python3-all
+         # for make check
+         UBUNTU_PACKAGES_CI_KEY: >
            ibus
            python3-pip
          FEDORA_PACKAGES_MAKE: >
@@ -86,6 +88,7 @@ jobs:
             apt-get install -q -y git
             PACKAGES=$(echo "$UBUNTU_PACKAGES_AUTOGEN" | tr -d '\n')
             PACKAGES=$(echo "$PACKAGES $UBUNTU_PACKAGES_MAKE" | tr -d '\n')
+            PACKAGES=$(echo "$PACKAGES $UBUNTU_PACKAGES_CI_KEY" | tr -d '\n')
             echo "apt-get install -y $PACKAGES"
             apt-get install -y $PACKAGES
             dpkg -l | grep anthy
@@ -146,6 +149,8 @@ jobs:
           --disable-static
 
       - name: Run make
+        # UTF-8 locale is required for sed 'y/0123456789/０１２３４５６７８９/'
+        #
         # Set the cutom DESTDIR because the default DESTDIR
         # /home/travis/bulid/fujiwarat/$PKG/ibus/ibus-$VERSION/_inst seems to
         # be too long and failed to set DESTDIR to install
@@ -159,5 +164,6 @@ jobs:
       - name: Desktop file validation
         run: |
           make -C setup/python3 ibus-setup-anthy.desktop
+          echo "desktop-file-validate ./setup/python3/ibus-setup-anthy.desktop"
           desktop-file-validate ./setup/python3/ibus-setup-anthy.desktop
 

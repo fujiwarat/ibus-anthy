@@ -53,7 +53,7 @@ jobs:
            pkg-config
            python3-all
            ibus
-           tappy
+           python3-pip
          FEDORA_PACKAGES_MAKE: >
            anthy-unicode-devel
            desktop-file-utils
@@ -157,7 +157,7 @@ jobs:
           DESTDIR="$HOME/build/$USER/dest"
 
       - name: Desktop file validation
-        run: >
-          desktop-file-validate
-          ./setup/python3/ibus-setup-anthy.desktop
+        run: |
+          make -C setup/python3 ibus-setup-anthy.desktop
+          desktop-file-validate ./setup/python3/ibus-setup-anthy.desktop
 

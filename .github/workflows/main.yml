@@ -148,6 +148,7 @@ jobs:
         # be too long and failed to set DESTDIR to install
         # bindings/pygobject/IBus.py
         run: >
+          env LANG=C.UTF-8
           make distcheck
           VERBOSE=1
           DESTDIR="$HOME/build/$USER/dest"

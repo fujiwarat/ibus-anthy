@@ -80,8 +80,12 @@ init_environment()
     TAP_DIR=`python -m site --user-site`/pycotap;
     if test $HAS_TAP -ne 1 && \
        test x"$TAP_DIR" != x && test ! -d "$TAP_DIR" ; then
-            echo "pip install pycotap --user";
-            pip install pycotap --user;
+            PIP=pip3
+            if ! command -v $PIP &> /dev/null ; then
+                PIP=pip
+            fi
+            echo "$PIP install pycotap --user";
+            $PIP install pycotap --user;
     fi;
     if test ! -f $BUILDDIR/../data/$ANTHY_SCHEMA_FILE ; then
         echo "Not found $BUILDDIR/../data/$ANTHY_SCHEMA_FILE";

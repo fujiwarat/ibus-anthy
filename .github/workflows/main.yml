@@ -52,6 +52,7 @@ jobs:
            libtool
            pkg-config
            python3-all
+           ibus
            tappy
          FEDORA_PACKAGES_MAKE: >
            anthy-unicode-devel

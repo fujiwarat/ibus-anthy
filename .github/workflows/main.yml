@@ -52,6 +52,7 @@ jobs:
            libtool
            pkg-config
            python3-all
+           tappy
          FEDORA_PACKAGES_MAKE: >
            anthy-unicode-devel
            desktop-file-utils
@@ -69,6 +70,7 @@ jobs:
            gnome-shell
            gnome-shell-extension-no-overview
            libXtst-devel
+           python3-pycotap
          FEDORA_PACKAGES_DISTRO: >
            patch
            strace

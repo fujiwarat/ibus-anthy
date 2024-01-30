@@ -122,7 +122,7 @@ init_environment()
 
 run_ibus_daemon()
 {
-    ibus-daemon --verbose --panel disable &;
+    ibus-daemon --verbose --panel disable &
     sleep 1;
     USER=${USER:-`id | sed -e "s/uid=[0-9]*(\([^)]*\)).*/\1/"`};
     USER=`echo "$USER" | cut -c 1-7`;

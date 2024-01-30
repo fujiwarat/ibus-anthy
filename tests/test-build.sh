@@ -126,6 +126,7 @@ run_ibus_daemon()
     sleep 1;
     env
     id
+    USER=${USER:-`id | sed -e "s/uid=[0-9]*(\([^)]*\)).*/\1/"`}
     USER=`echo "$USER" | cut -c 1-7`;
     ps -ef | grep "$SUSER" | grep ibus | grep -v grep;
 }

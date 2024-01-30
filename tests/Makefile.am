@@ -55,6 +55,7 @@ $(test_metas): $(test_metas_in)
 EXTRA_DIST = \
     anthycases.py \
     anthytest.py \
+    foo.py \
     meta.test.in \
     test-build.sh \
     test-console.sh \

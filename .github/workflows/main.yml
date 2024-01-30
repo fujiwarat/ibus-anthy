@@ -76,6 +76,7 @@ jobs:
            python3-pycotap
          FEDORA_PACKAGES_DISTRO: >
            patch
+           procps-ng
            strace
 
         run: |

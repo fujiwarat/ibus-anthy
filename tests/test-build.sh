@@ -73,7 +73,7 @@ maybe_install_pycotap() {
     fi;
 
     # Check if pycotap is already available.
-    if ! python3 -m pycotap >/dev/null; then
+    if ! python3 -c "import pycotap"; then
         PIP=pip3
         if ! command -v $PIP &> /dev/null ; then
             PIP=pip

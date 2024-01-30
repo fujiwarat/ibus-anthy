@@ -124,6 +124,8 @@ run_ibus_daemon()
 {
     ibus-daemon --daemonize --verbose --panel disable;
     sleep 1;
+    env
+    id
     USER=`echo "$USER" | cut -c 1-7`;
     ps -ef | grep "$SUSER" | grep ibus | grep -v grep;
 }

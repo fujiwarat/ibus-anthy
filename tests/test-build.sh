@@ -128,7 +128,7 @@ run_ibus_daemon()
     id
     USER=${USER:-`id | sed -e "s/uid=[0-9]*(\([^)]*\)).*/\1/"`}
     USER=`echo "$USER" | cut -c 1-7`;
-    ps -ef | grep "$SUSER" | grep ibus | grep -v grep;
+    ps -ef | grep "$USER" | grep ibus | grep -v grep;
 }
 
 run_test_suite()

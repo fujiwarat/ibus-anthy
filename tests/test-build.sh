@@ -141,7 +141,7 @@ run_test_suite()
         echo "#### Starting Python$i API test $RUN_ARGS";
         env IBUS_ANTHY_ENGINE_PATH=$SRCDIR/../engine/python$i          \
             IBUS_ANTHY_SETUP_PATH=$SRCDIR/../setup/python$i            \
-        python$i -u $SRCDIR/anthytest.py $RUN_ARGS;
+        python$i -u $SRCDIR/foo.py $RUN_ARGS;
         if test $? -ne 0 ; then
             exit -1;
         fi;

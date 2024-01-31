@@ -28,6 +28,8 @@ ANTHY_SCHEMA_FILE=org.freedesktop.ibus.engine.anthy.gschema.xml;
 SCHEMA_TMPDIR="";
 FORCE_TEST="";
 RUN_ARGS="";
+# Fedora 39 Docker does not provide USER
+USER=${USER:-`id | sed -e "s/uid=[0-9]*(\([^)]*\)).*/\1/"`};
 
 usage()
 {
@@ -122,11 +124,11 @@ init_environment()
 
 run_ibus_daemon()
 {
-    ibus-daemon --verbose --panel disable &
+    # this script can run without Display
+    ibus-daemon --daemonize --verbose --panel disable --emoji-extension disable;
     sleep 1;
-    USER=${USER:-$(id | sed -e "s/uid=[0-9]*(\([^)]*\)).*/\1/")};
-    USER=`echo "$USER" | cut -c 1-7`;
-    ps -ef | grep "$USER" | grep ibus | grep -v grep;
+    SUSER=`echo "$USER" | cut -c 1-7`;
+    ps -ef | grep "$SUSER" | grep ibus | grep -v grep;
 }
 
 run_test_suite()
@@ -144,7 +146,7 @@ run_test_suite()
         python$i -u $SRCDIR/foo.py $RUN_ARGS;
         RETVAL=$?
         # Return 5 with "NO TESTS RAN" in unittest/runner.py since python 3.12.1
-        if test $RETVAL -ne 0 && $RETVAL -ne 5; then
+        if test $RETVAL -ne 0 && test $RETVAL -ne 5; then
             exit 1;
         fi;
         if test x$FORCE_TEST = x ; then

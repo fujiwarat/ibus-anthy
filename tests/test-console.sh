@@ -34,6 +34,8 @@ PID_XORG=0;
 PID_GNOME_SESSION=0;
 FORCE_TEST="";
 RUN_ARGS="--exit";
+# Fedora 39 Docker does not provide USER
+USER=${USER:-`id | sed -e "s/uid=[0-9]*(\([^)]*\)).*/\1/"`};
 
 usage()
 {
@@ -152,8 +154,10 @@ run_test_suite()
     echo "#### Starting $PYTHON API test $RUN_ARGS";
     export GTK_IM_MODULE=ibus
     $PYTHON -u $SRCDIR/anthytest.py $RUN_ARGS;
-    if test $? -ne 0 ; then
-        exit -1;
+    RETVAL=$?
+    # Return 5 with "NO TESTS RAN" in unittest/runner.py since python 3.12.1
+    if test $RETVAL -ne 0 && test $RETVAL -ne 5; then
+        exit 1;
     fi;
     if test x$FORCE_TEST = x ; then
         for ANTHY_CONFIG in ".anthy" ".config/anthy" ; do

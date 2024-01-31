@@ -143,7 +143,7 @@ run_test_suite()
         echo "#### Starting Python$i API test $RUN_ARGS";
         env IBUS_ANTHY_ENGINE_PATH=$SRCDIR/../engine/python$i          \
             IBUS_ANTHY_SETUP_PATH=$SRCDIR/../setup/python$i            \
-        python$i -u $SRCDIR/foo.py $RUN_ARGS;
+        python$i -u $SRCDIR/anthytest.py $RUN_ARGS;
         RETVAL=$?
         # Return 5 with "NO TESTS RAN" in unittest/runner.py since python 3.12.1
         if test $RETVAL -ne 0 && test $RETVAL -ne 5; then

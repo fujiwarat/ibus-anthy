@@ -4,7 +4,7 @@
 # ibus-anthy - The Anthy engine for IBus
 #
 # Copyright (c) 2007-2008 Peng Huang <shawn.p.huang@gmail.com>
-# Copyright (c) 2010-2024 Takao Fujiwara <takao.fujiwara1@gmail.com>
+# Copyright (c) 2010-2025 Takao Fujiwara <takao.fujiwara1@gmail.com>
 # Copyright (c) 2007-2018 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -116,6 +116,7 @@ for k, v in zip(['KEY_KP_Add', 'KEY_KP_Decimal', 'KEY_KP_Divide', 'KEY_KP_Enter'
     KP_Table[getattr(IBus, k)] = getattr(IBus, v)
 
 class Engine(IBus.EngineSimple):
+    __gtype_name__ = 'IBusEngineAnthy'
     __input_mode = None
     __typing_mode = None
     __segment_mode = None
@@ -129,12 +130,12 @@ class Engine(IBus.EngineSimple):
 
     def __init__(self, bus, object_path):
         if hasattr(IBus.Engine.props, 'has_focus_id'):
-            super(Engine, self).__init__(engine_name="anthy",
+            super(Engine, self).__init__(engine_name='anthy',
                                          connection=bus.get_connection(),
                                          object_path=object_path,
                                          has_focus_id=True)
         else:
-            super(Engine, self).__init__(engine_name="anthy",
+            super(Engine, self).__init__(engine_name='anthy',
                                          connection=bus.get_connection(),
                                          object_path=object_path)
 
@@ -186,6 +187,11 @@ class Engine(IBus.EngineSimple):
         # loop infinitely if this class overrides it.
         # self.process_key_event is not accessible too.
         self.connect('process-key-event', self.__process_key_event)
+        self.connect('focus-in', self.__focus_in)
+        # flashing compose sequence in GNOME instead of system bell
+        self.connect('focus-in-id', self.__focus_in_id)
+        self.connect('focus-out', self.__focus_out)
+        self.connect('focus-out-id', self.__focus_out_id)
         self.connect('destroy', self.__destroy)
         self.connect('page-down', self.__page_down)
         self.connect('page-up', self.__page_up)
@@ -1059,13 +1065,10 @@ class Engine(IBus.EngineSimple):
     def __rgb(self, r, g, b):
         return self.__argb(255, r, g, b)
 
-    def do_focus_in(self):
-        self.do_focus_in_id(None, None)
+    def __focus_in(self, obj):
+        self.__focus_in_id(obj, None, None)
 
-    def do_focus_out(self):
-        self.do_focus_out_id(None)
-
-    def do_focus_in_id(self, object_path, client):
+    def __focus_in_id(self, obj, object_path, client):
         self.register_properties(self.__prop_list)
         self.__refresh_typing_mode_property()
         mode = self.__prefs.get_value('common', 'behavior-on-focus-out')
@@ -1077,7 +1080,10 @@ class Engine(IBus.EngineSimple):
         if size != self.__lookup_table.get_page_size():
             self.__lookup_table.set_page_size(size)
 
-    def do_focus_out_id(self, object_path):
+    def __focus_out(self, obj):
+        self.__focus_out_id(obj, None)
+
+    def __focus_out_id(self, obj, object_path):
         if self.__has_input_purpose:
             self.__input_purpose = 0
         mode = self.__prefs.get_value('common', 'behavior-on-focus-out')

@@ -4,7 +4,7 @@
 # ibus-anthy - The Anthy engine for IBus
 #
 # Copyright (c) 2007-2008 Peng Huang <shawn.p.huang@gmail.com>
-# Copyright (c) 2010-2017 Takao Fujiwara <takao.fujiwara1@gmail.com>
+# Copyright (c) 2010-2025 Takao Fujiwara <takao.fujiwara1@gmail.com>
 # Copyright (c) 2007-2017 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ import engine
 
 
 class EngineFactory(IBus.Factory):
+    __gtype_name__ = 'IBusFactoryAnthy'
     FACTORY_PATH = '/com/redhat/IBus/engines/Anthy/Factory'
     ENGINE_PATH = '/com/redhat/IBus/engines/Anthy/Engine'
     NAME = 'Anthy'

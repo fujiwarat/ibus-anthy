@@ -2,8 +2,8 @@
 #
 # ibus-anthy - The Anthy engine for IBus
 #
-# Copyright (c) 2014 Takao Fujiwara <takao.fujiwara1@gmail.com>
-# Copyright (c) 2014 Red Hat, Inc.
+# Copyright (c) 2014-2025 Takao Fujiwara <takao.fujiwara1@gmail.com>
+# Copyright (c) 2014-2025 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,10 +20,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 SUBDIRS =
-
-if ENABLE_PYTHON2
-SUBDIRS += python2
-endif
 
 if ENABLE_PYTHON3
 SUBDIRS += python3

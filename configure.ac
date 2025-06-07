@@ -117,12 +117,12 @@ AC_SUBST(ENV_IBUS_TEST)
 dnl - define python version
 AC_ARG_WITH(python,
     AS_HELP_STRING([--with-python[=PATH]],
-        [Select python2 or python3]),
+        [Select python3. python2 is no longer supported.]),
     [PYTHON=$with_python], []
 )
 
 dnl export $pyexecdir using existent $PYTHON
-AM_PATH_PYTHON([2.5])
+AM_PATH_PYTHON([3.0])
 
 dnl Decided to separate python3 directory from python2 directory here
 dnl because engine/table.py includes unicode array so it's better to
@@ -142,15 +142,12 @@ dnl     return gettext(a)
 case "$PYTHON_VERSION" in
 3.*)
     enable_python3=yes
-    enable_python2=no
     ;;
 *)
-    enable_python3=no
-    enable_python2=yes
+    AC_MSG_ERROR([Not support PYTHON $PYTHON])
     ;;
 esac
 
-AM_CONDITIONAL([ENABLE_PYTHON2], [test x"$enable_python2" = x"yes"])
 AM_CONDITIONAL([ENABLE_PYTHON3], [test x"$enable_python3" = x"yes"])
 
 dnl - check the supported ibus version
@@ -192,15 +189,14 @@ fi
 AC_SUBST(ENV_IBUS_ENGINE)
 
 dnl - check pygtk2
-AC_MSG_CHECKING([whether you enable pygtk2 anthy])
+AC_MSG_NOTICE([pygtk2 does not work because python2 is no longer supported.])
 AC_ARG_ENABLE(pygtk2-anthy,
               AS_HELP_STRING([--enable-pygtk2-anthy=no/yes],
-                             [Install pygtk2 anthy default=no]),
-              [],
-              enable_pygtk2_anthy=no)
-AC_MSG_RESULT($enable_pygtk2_anthy)
+                             [pygtk2 is no longer supported.]),
+              enable_pygtk2=no,
+              enable_pygtk2=no)
 
-if test x"$enable_pygtk2_anthy" = xyes; then
+if test x"$enable_pygtk2" = xyes; then
     AM_CONDITIONAL(HAVE_PYGTK2_ANTHY, true)
 
     dnl - check swig
@@ -447,14 +443,10 @@ ibus-anthy.spec
 data/Makefile
 gir/Makefile
 engine/Makefile
-engine/python2/Makefile
-engine/python2/anthy.inputMethod.xml.in
-engine/python2/default.inputMethod.xml.in
 engine/python3/Makefile
 engine/python3/anthy.inputMethod.xml.in
 engine/python3/default.inputMethod.xml.in
 setup/Makefile
-setup/python2/Makefile
 setup/python3/Makefile
 tests/Makefile
 icons/Makefile
@@ -475,7 +467,7 @@ ANTHY_GOBJECT_GIRDIR        $ANTHY_GOBJECT_GIRDIR
 ANTHY_GOBJECT_TYPELIBSDIR   $ANTHY_GOBJECT_TYPELIBSDIR
 LT_VERSION_INFO             $LT_VERSION_INFO
 ENV_IBUS_ENGINE             $ENV_IBUS_ENGINE
-HAVE_PYGTK2_ANTHY           $enable_pygtk2_anthy
+HAVE_PYGTK2_ANTHY           $enable_pygtk2
 python                      $PYTHON
 Enable python2              $enable_python2
 Enable python3              $enable_python3

@@ -152,6 +152,7 @@ class Engine(IBus.EngineSimple):
         self.__prop_dict = {}
         self.__input_purpose = 0
         self.__has_input_purpose = False
+        self.__has_preedit_format_hint = False
         # OSK mode is designed for OSK on gnome-shell, which always shows
         # IBus lookup window prior to the preedit and selecting a candidate
         # causes the commmit instead of the selection.
@@ -169,6 +170,8 @@ class Engine(IBus.EngineSimple):
         except ValueError as e:
             printerr('Disable update_preedit_text_with_mode(): %s' % str(e))
             self.__has_update_preedit_text_with_mode = False
+        if hasattr(IBus, 'attr_hint_new'):
+            self.__has_preedit_format_hint = True
 
 #        self.__lookup_table = ibus.LookupTable.new(page_size=9,
 #                                                   cursor_pos=0,
@@ -1241,9 +1244,14 @@ class Engine(IBus.EngineSimple):
     def __update_input_chars(self):
         text, cursor = self.__get_preedit()
         attrs = IBus.AttrList()
-        attrs.append(IBus.attr_underline_new(
-            IBus.AttrUnderline.SINGLE, 0,
-            len(text)))
+        if self.__has_preedit_format_hint:
+            attrs.append(IBus.attr_hint_new(
+                    IBus.AttrPreedit.WHOLE, 0,
+                    len(text)))
+        else:
+            attrs.append(IBus.attr_underline_new(
+                    IBus.AttrUnderline.SINGLE, 0,
+                    len(text)))
 
         self.update_preedit(text,
             attrs, cursor, not self.__preedit_ja_string.is_empty())
@@ -1293,12 +1301,18 @@ class Engine(IBus.EngineSimple):
             text = text.capitalize()
         self.__convert_chars = text
         attrs = IBus.AttrList()
-        attrs.append(IBus.attr_underline_new(
-            IBus.AttrUnderline.SINGLE, 0, len(text)))
-        attrs.append(IBus.attr_background_new(self.__rgb(200, 200, 240),
-            0, len(text)))
-        attrs.append(IBus.attr_foreground_new(self.__rgb(0, 0, 0),
-            0, len(text)))
+        if self.__has_preedit_format_hint:
+            attrs.append(IBus.attr_hint_new(
+                    IBus.AttrPreedit.WHOLE, 0, len(text)))
+            attrs.append(IBus.attr_hint_new(
+                    IBus.AttrPreedit.SELECTION, 0, len(text)))
+        else:
+            attrs.append(IBus.attr_underline_new(
+                    IBus.AttrUnderline.SINGLE, 0, len(text)))
+            attrs.append(IBus.attr_background_new(self.__rgb(200, 200, 240),
+                    0, len(text)))
+            attrs.append(IBus.attr_foreground_new(self.__rgb(0, 0, 0),
+                    0, len(text)))
         self.update_preedit(text, attrs, len(text), True)
 
         self.update_aux_string('',
@@ -1314,12 +1328,20 @@ class Engine(IBus.EngineSimple):
             if i < self.__cursor_pos:
                 pos += len(text)
         attrs = IBus.AttrList()
-        attrs.append(IBus.attr_underline_new(
-            IBus.AttrUnderline.SINGLE, 0, len(self.__convert_chars)))
-        attrs.append(IBus.attr_background_new(self.__rgb(200, 200, 240),
-                pos, pos + len(self.__segments[self.__cursor_pos][1])))
-        attrs.append(IBus.attr_foreground_new(self.__rgb(0, 0, 0),
-                pos, pos + len(self.__segments[self.__cursor_pos][1])))
+        if self.__has_preedit_format_hint:
+            attrs.append(IBus.attr_hint_new(
+                    IBus.AttrPreedit.WHOLE, 0, len(self.__convert_chars)))
+            attrs.append(IBus.attr_hint_new(
+                    IBus.AttrPreedit.SELECTION,
+                    pos,
+                    pos + len(self.__segments[self.__cursor_pos][1])))
+        else:
+            attrs.append(IBus.attr_underline_new(
+                    IBus.AttrUnderline.SINGLE, 0, len(self.__convert_chars)))
+            attrs.append(IBus.attr_background_new(self.__rgb(200, 200, 240),
+                    pos, pos + len(self.__segments[self.__cursor_pos][1])))
+            attrs.append(IBus.attr_foreground_new(self.__rgb(0, 0, 0),
+                    pos, pos + len(self.__segments[self.__cursor_pos][1])))
         self.update_preedit(self.__convert_chars, attrs, pos, True)
         aux_string = '( %d / %d )' % (self.__lookup_table.get_cursor_pos() + 1, self.__lookup_table.get_number_of_candidates())
         self.update_aux_string(aux_string,

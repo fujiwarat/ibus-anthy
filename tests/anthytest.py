@@ -62,13 +62,15 @@ PY3K = sys.version_info >= (3, 0)
 DONE_EXIT = True
 
 if 'IBUS_ANTHY_ENGINE_PATH' in os.environ:
-    engine_path = os.environ['IBUS_ANTHY_ENGINE_PATH']
-    if engine_path != None and engine_path != '':
-        sys.path.append(engine_path)
+    engine_paths = os.environ['IBUS_ANTHY_ENGINE_PATH']
+    if engine_paths != None and engine_paths != '':
+        for engine_path in engine_paths.split(':'):
+            sys.path.append(engine_path)
 if 'IBUS_ANTHY_SETUP_PATH' in os.environ:
-    setup_path = os.environ['IBUS_ANTHY_SETUP_PATH']
-    if setup_path != None and setup_path != '':
-        sys.path.append(setup_path)
+    setup_paths = os.environ['IBUS_ANTHY_SETUP_PATH']
+    if setup_paths != None and setup_paths != '':
+        for setup_path in setup_paths.split(':'):
+            sys.path.append(setup_path)
 sys.path.append('/usr/share/ibus-anthy/engine')
 
 from anthycases import TestCases

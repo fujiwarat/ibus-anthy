@@ -1,0 +1,55 @@
+option('install-tests',
+  type: 'boolean',
+  value: false,
+  description: 'Enable to install tests',
+)
+option('anthygobject-libdir',
+  type: 'string',
+  value: '',
+  description: 'file path of libanthygobject.so',
+)
+option('engine-env',
+  type: 'string',
+  value: '',
+  description: 'Set environments. LD_LIBRARY_PATH=/lib/anthy for libanthy.so',
+)
+option('anthy-zipcode',
+  type: 'string',
+  value: '',
+  description: 'file path of Anty zipcode.t',
+)
+option('kasumi-exec',
+  type: 'string',
+  value: '',
+  description: 'file path of kasumi bin',
+)
+option('kasumi-icon',
+  type: 'string',
+  value: '',
+  description: 'file path of kasumi icon',
+)
+option('private-png',
+  type: 'boolean',
+  value: true,
+  description: 'if you install the private png file',
+)
+option('on-off-keys',
+  type: 'array',
+  value: [ 'Zenkaku_Hankaku', 'Ctrl+J' ],
+  description: 'Anthy default on-off keys.',
+)
+option('keyboard-layout',
+  type: 'string',
+  value: 'default',
+  description: 'Define the keyboard layout. the default is "default".',
+)
+# When IBus is built with the Json files in test directory, the build
+# tries to install IBus.py file into pyoverridesdir.
+# The default GI directory is /usr in Flatpak but the directory is readonly
+# with `flatpak-builder` and the Flatpak specific GI files are installed in
+# /app GI directory.
+option('python-overrides-dir',
+  type: 'string',
+  value: '',
+  description: 'Python overrides directory',
+)

@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: ["fedora:43", "fedora:44", "ubuntu:jammy"]
+        container: ["fedora:44", "fedora:45", "ubuntu:jammy", "ubuntu:resolute"]
     steps:
       - name: Check container sha tags
         run: |
@@ -25,10 +25,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: ["fedora:43", "fedora:44", "ubuntu:jammy"]
+        include:
+          - container: fedora:45
+            build: BUILD_MESON
+          - container: ubuntu:resolute
+            build: BUILD_MESON
+          - container: fedora:44
+            build: BUILD_AUTOTOOL
+          - container: fedora:45
+            build: BUILD_AUTOTOOL
+          - container: ubuntu:jammy
+            build: BUILD_AUTOTOOL
+          - container: ubuntu:resolute
+            build: BUILD_AUTOTOOL
 
     container:
       image: ${{ matrix.container }}
+
+    env:
+      BUILD_AUTOTOOL: 0
+      BUILD_MESON: 1
 
     steps:
       - name: Install distro packages
@@ -37,6 +53,10 @@ jobs:
          UBUNTU_PACKAGES_AUTOGEN: >
            autopoint
            strace
+         UBUNTU_PACKAGES_MESON: >
+           libibus-1.0-dev
+           meson
+           python3-minimal
          # For make from
          # https://packages.ubuntu.com/search?searchon=sourcenames&keywords=ibus-anthy
          UBUNTU_PACKAGES_MAKE: >
@@ -56,6 +76,8 @@ jobs:
          UBUNTU_PACKAGES_CI_KEY: >
            ibus
            python3-pip
+         UBUNTU_PACKAGES_BUILD_NEW: >
+           python3-pycotap
          FEDORA_PACKAGES_MAKE: >
            anthy-unicode-devel
            desktop-file-utils
@@ -68,6 +90,8 @@ jobs:
            libtool
            python3-devel
            python3-gobject
+         FEDORA_PACKAGES_MESON: >
+           meson
          # for ibus-keypress
          FEDORA_PACKAGES_CI_KEY: >
            gnome-shell
@@ -90,6 +114,12 @@ jobs:
             PACKAGES=$(echo "$UBUNTU_PACKAGES_AUTOGEN" | tr -d '\n')
             PACKAGES=$(echo "$PACKAGES $UBUNTU_PACKAGES_MAKE" | tr -d '\n')
             PACKAGES=$(echo "$PACKAGES $UBUNTU_PACKAGES_CI_KEY" | tr -d '\n')
+            if test "${{ matrix.container }}" != "ubuntu:jammy"; then
+              PACKAGES=$(echo "$PACKAGES $UBUNTU_PACKAGES_BUILD_NEW" | tr -d '\n')
+            fi
+            if test $${{ matrix.build }} -eq $BUILD_MESON; then
+              PACKAGES=$(echo "$PACKAGES $UBUNTU_PACKAGES_MESON" | tr -d '\n')
+            fi
             echo "apt-get install -y $PACKAGES"
             apt-get install -y $PACKAGES
             dpkg -l | grep anthy
@@ -97,15 +127,18 @@ jobs:
           fedora*)
             cat /etc/fedora-release
             DNF=dnf
-            echo "$DNF -y update"
-            $DNF -y update
-            echo "$DNF -y install git which"
-            $DNF -y install git which
+            echo "$DNF -y update --enablerepo=updates-testing"
+            $DNF -y update --enablerepo=updates-testing
+            echo "$DNF -y install --enablerepo=updates-testing git which"
+            $DNF -y install --enablerepo=updates-testing git which
             PACKAGES=$(echo "$FEDORA_PACKAGES_MAKE" | tr -d '\n')
             PACKAGES=$(echo "$PACKAGES $FEDORA_PACKAGES_CI_KEY" | tr -d '\n')
             PACKAGES=$(echo "$PACKAGES $FEDORA_PACKAGES_DISTRO" | tr -d '\n')
-            echo "$DNF -y install $PACKAGES"
-            $DNF -y install $PACKAGES
+            if test $${{ matrix.build }} -eq $BUILD_MESON; then
+              PACKAGES=$(echo "$PACKAGES $FEDORA_PACKAGES_MESON" | tr -d '\n')
+            fi
+            echo "$DNF -y install --enablerepo=updates-testing $PACKAGES"
+            $DNF -y install --enablerepo=updates-testing $PACKAGES
             ;;
           *)
             echo "Not supported ${{ matrix.container }}"
@@ -137,6 +170,12 @@ jobs:
         # configure options from
         # https://salsa.debian.org/debian/ibus/-/blob/master/debian/rules
         run: >
+          if test $${{ matrix.build }} -eq $BUILD_MESON;
+          then
+          meson setup builddir
+          -Don-off-keys="['Zenkaku_Hankaku', 'Ctrl+space', 'Ctrl+J']"
+          -Dinstall-tests=true;
+          else
           ./autogen.sh
           --libexecdir=/usr/lib/ibus
           --with-layout='default'
@@ -144,7 +183,8 @@ jobs:
           --with-hotkeys
           --with-on-off-keys="'Zenkaku_Hankaku', 'Ctrl+space', 'Ctrl+J'"
           --enable-installed-tests
-          --disable-static
+          --disable-static;
+          fi;
 
       - name: Run make
         # UTF-8 locale is required for sed 'y/0123456789/０１２３４５６７８９/'
@@ -154,14 +194,25 @@ jobs:
         # be too long and failed to set DESTDIR to install
         # bindings/pygobject/IBus.py
         run: >
-          env LANG=C.UTF-8
+          export LANG=C.UTF-8;
+          if test $${{ matrix.build }} -eq $BUILD_MESON;
+          then
+          meson dist -C builddir;
+          else
           make distcheck
           VERBOSE=1
-          DESTDIR="$HOME/build/$USER/dest"
+          DESTDIR="$HOME/build/$USER/dest";
+          fi;
 
       - name: Desktop file validation
         run: |
+          if test $${{ matrix.build }} -eq $BUILD_MESON;
+          then
+          meson compile -C builddir ibus-setup-anthy.desktop
+          echo "desktop-file-validate ./setup/python3/ibus-setup-anthy.desktop"
+          desktop-file-validate ./builddir/setup/python3/ibus-setup-anthy.desktop
+          else
           make -C setup/python3 ibus-setup-anthy.desktop
           echo "desktop-file-validate ./setup/python3/ibus-setup-anthy.desktop"
           desktop-file-validate ./setup/python3/ibus-setup-anthy.desktop
-
+          fi

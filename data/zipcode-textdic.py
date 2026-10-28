@@ -11,6 +11,7 @@
 from __future__ import print_function
 
 import codecs
+import os
 import sys
 
 if len(sys.argv) < 2:
@@ -19,14 +20,21 @@ if len(sys.argv) < 2:
     exit(-1)
 
 anthy_zipfile = sys.argv[1]
+destdir = '.'
+if len(sys.argv) > 2:
+    destdir = sys.argv[2]
 
+print('test', anthy_zipfile)
 try:
-    contents = codecs.open(anthy_zipfile, 'r', 'euc_jp').read()
+    with codecs.open(anthy_zipfile, 'r', encoding='euc_jp') as f:
+        contents = f.read()
 except UnicodeDecodeError as e:
     print('Your file is not eucJP? %s' % anthy_zipfile, file=sys.stderr)
-    contents = open(anthy_zipfile).read()
+    with codecs.open(anthy_zipfile, 'r') as f:
+        contents = f.read()
 
-output_zipfile = codecs.open('zipcode.t', 'w', 'utf-8')
+destfile = os.path.join(destdir, 'zipcode.t')
+output_zipfile = codecs.open(destfile, 'w', encoding='utf-8')
 output_zipfile.write('# copied %s with UTF-8.\n#\n' % anthy_zipfile)
 
 for line in contents.split('\n'):

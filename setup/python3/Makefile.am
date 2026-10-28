@@ -77,8 +77,9 @@ EXTRA_DIST = \
 	$(NULL)
 
 ibus-setup-anthy: ibus-setup-anthy.in
-	sed -e "s|\@prefix\@|$(prefix)|g" \
+	sed -e "s|\@datadir\@|$(datadir)|g" \
 	    -e "s|\@localedir\@|$(localedir)|g" \
+	    -e "s|\@PACKAGE\@|$(PACKAGE)|g" \
 	    -e "s|\@PYTHON\@|$(PYTHON)|g" \
 	$< > $@
 

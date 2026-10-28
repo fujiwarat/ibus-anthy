@@ -21,19 +21,21 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 dnl - if not 1, append datestamp to the version number.
-m4_define([ibus_anthy_released], [1])
+m4_define([ibus_anthy_released], [0])
 m4_define([ibus_anthy_major_version], [1])
 m4_define([ibus_anthy_minor_version], [5])
-m4_define([ibus_anthy_micro_version], [18])
+m4_define([ibus_anthy_micro_version], [19])
+m4_define([ibus_anthy_beta_version], [alpha1])
 m4_define([ibus_abi_current], [5])
 m4_define([ibus_abi_revision],
           [m4_eval(100 * ibus_anthy_minor_version + ibus_anthy_micro_version)])
 m4_define([ibus_abi_age], [0])
 m4_define(ibus_maybe_datestamp,
     m4_esyscmd([if test x]ibus_anthy_released[ != x1; then date +.%Y%m%d | tr -d '\n\r'; fi]))
-
+m4_define([ibus_anthy_beta_suffix],
+          m4_if(ibus_anthy_released, 0, -ibus_anthy_beta_version))
 m4_define([ibus_anthy_version],
-    ibus_anthy_major_version.ibus_anthy_minor_version.ibus_anthy_micro_version[]ibus_maybe_datestamp)
+    ibus_anthy_major_version.ibus_anthy_minor_version.ibus_anthy_micro_version[]ibus_anthy_beta_suffix)
 m4_define([ibus_required_version], [1.5.0])
 m4_define([glib_required_version], [2.26.0])
 
@@ -46,6 +48,9 @@ AC_CONFIG_MACRO_DIR([m4])
 
 dnl - define PACKAGE_VERSION_* variables
 AS_VERSION
+IBUS_ANTHY_MAJOR_VERSION=ibus_anthy_major_version
+IBUS_ANTHY_MINOR_VERSION=ibus_anthy_minor_version
+IBUS_ANTHY_MICRO_VERSION=ibus_anthy_micro_version
 AS_NANO
 AM_SANITY_CHECK
 AM_MAINTAINER_MODE(enable)

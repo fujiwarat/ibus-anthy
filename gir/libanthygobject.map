@@ -1,0 +1,6 @@
+{
+global:
+  anthy_gcontext_*;
+local:
+  *;
+};

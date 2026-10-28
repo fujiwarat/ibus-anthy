@@ -22,4 +22,4 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 export IBUS_LOCALEDIR=@localedir@
-exec @PYTHON@ @prefix@/share/ibus-anthy/setup/main.py "$@"
+exec @PYTHON@ @datadir@/@PACKAGE@/setup/main.py "$@"

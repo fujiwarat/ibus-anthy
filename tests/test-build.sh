@@ -142,10 +142,16 @@ run_test_suite()
 
     for i in 3; do
         echo "#### Starting Python$i API test $RUN_ARGS";
-        env IBUS_ANTHY_ENGINE_PATH=$SRCDIR/../engine/python$i          \
-            IBUS_ANTHY_SETUP_PATH=$SRCDIR/../setup/python$i            \
+        _ENGINE_PATH=$SRCDIR/../engine/python$i;
+        _ENGINE_PATH=${_ENGINE_PATH}:$BUILDDIR/../engine/python$i;
+        _SETUP_PATH=$SRCDIR/../setup/python$i;
+        _SETUP_PATH=${_SETUP_PATH}:$BUILDDIR/../setup/python$i;
+        env IBUS_ANTHY_ENGINE_PATH=$_ENGINE_PATH                       \
+            IBUS_ANTHY_SETUP_PATH=$_SETUP_PATH                         \
         python$i -u $SRCDIR/anthytest.py $RUN_ARGS;
         RETVAL=$?
+        _ENGINE_PATH=;
+        _SETUP_PATH=;
         # Return 5 with "NO TESTS RAN" in unittest/runner.py since python 3.12.1
         if test $RETVAL -ne 0 && test $RETVAL -ne 5; then
             exit 1;

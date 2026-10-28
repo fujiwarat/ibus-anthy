@@ -50,9 +50,9 @@ DISTCLEANFILES = \
 dist-hook:
 	if test -d .git ; then \
 		git log --name-status --date=iso > $(distdir)/ChangeLog ; \
-		PREV_MICRO_VERSION=`expr $(PACKAGE_VERSION_MICRO) - 1`; \
+		PREV_MICRO_VERSION=`expr $(IBUS_ANTHY_MICRO_VERSION) - 1`; \
 		PREV_VERSION=\
-"$(PACKAGE_VERSION_MAJOR).$(PACKAGE_VERSION_MINOR).$$PREV_MICRO_VERSION"; \
+"$(IBUS_ANTHY_MAJOR_VERSION).$(IBUS_ANTHY_MINOR_VERSION).$$PREV_MICRO_VERSION"; \
 		echo "Changes in $(PACKAGE_NAME) $(PACKAGE_VERSION)" \
 		        > $(distdir)/NEWS; \
 		echo "" >> $(distdir)/NEWS; \

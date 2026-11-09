@@ -25,7 +25,7 @@ m4_define([ibus_anthy_released], [0])
 m4_define([ibus_anthy_major_version], [1])
 m4_define([ibus_anthy_minor_version], [5])
 m4_define([ibus_anthy_micro_version], [19])
-m4_define([ibus_anthy_beta_version], [alpha1])
+m4_define([ibus_anthy_beta_version], [alpha2])
 m4_define([ibus_abi_current], [5])
 m4_define([ibus_abi_revision],
           [m4_eval(100 * ibus_anthy_minor_version + ibus_anthy_micro_version)])
@@ -60,6 +60,10 @@ AM_PROG_CC_C_O
 AC_PROG_CXX
 AC_HEADER_STDC
 LT_INIT
+
+AC_SUBST(IBUS_ANTHY_MAJOR_VERSION)
+AC_SUBST(IBUS_ANTHY_MINOR_VERSION)
+AC_SUBST(IBUS_ANTHY_MICRO_VERSION)
 
 dnl - For dislpay Date
 m4_define(ibus_datedisplay,

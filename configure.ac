@@ -21,12 +21,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, see <https://www.gnu.org/licenses/>.
 
-dnl - if not 1, append datestamp to the version number.
-m4_define([ibus_anthy_released], [0])
+# If ibus_anthy_released is 0, append beta to the version number.
+m4_define([ibus_anthy_released],
+          [m4_esyscmd(sh -c '. ./meson.config 2>/dev/null;
+           test "x$IBUS_RELEASED" = "x1" && echo -n 1 || echo -n 0')])
 m4_define([ibus_anthy_major_version], [1])
 m4_define([ibus_anthy_minor_version], [5])
 m4_define([ibus_anthy_micro_version], [19])
-m4_define([ibus_anthy_beta_version], [alpha2])
+m4_define([ibus_anthy_beta_version], [alpha3])
 m4_define([ibus_abi_current], [5])
 m4_define([ibus_abi_revision],
           [m4_eval(100 * ibus_anthy_minor_version + ibus_anthy_micro_version)])

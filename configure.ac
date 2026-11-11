@@ -6,6 +6,8 @@
 # Copyright (c) 2010-2026 Takao Fujiwara <takao.fujiwara1@gmail.com>
 # Copyright (c) 2007-2021 Red Hat, Inc.
 #
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -17,8 +19,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+# with this program; if not, see <https://www.gnu.org/licenses/>.
 
 dnl - if not 1, append datestamp to the version number.
 m4_define([ibus_anthy_released], [0])
